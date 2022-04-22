@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/CourtManager/static/css/main.e6c13ad2.css",
+    "main.js": "/CourtManager/static/js/main.65435a64.js",
+    "index.html": "/CourtManager/index.html",
+    "main.e6c13ad2.css.map": "/CourtManager/static/css/main.e6c13ad2.css.map",
+    "main.65435a64.js.map": "/CourtManager/static/js/main.65435a64.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.65435a64.js"
+  ]
+}
