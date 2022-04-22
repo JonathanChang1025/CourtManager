@@ -1,4 +1,5 @@
 {
+  "homepage": "https://JonathanChang1025.github.io/",
   "name": "court-manager",
   "version": "0.1.0",
   "private": true,
@@ -17,6 +18,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -51,5 +54,7 @@
   "bugs": {
     "url": "https://github.com/JonathanChang1025/CourtManager/issues"
   },
-  "homepage": "."
+  "devDependencies": {
+    "gh-pages": "^3.2.3"
+  }
 }

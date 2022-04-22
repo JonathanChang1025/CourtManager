@@ -21,7 +21,6 @@ ReactDOM.render(
       <Route path="/checkin" element={<CheckIn />} />
       <Route path="/qrscan" element={<QRScan />} />
     </Routes>
-    <Footer />
   </Router>,
 
   document.getElementById("root")
