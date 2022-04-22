@@ -1,28 +1,41 @@
-import React from "react";
+import React, { useState } from "react";
+import { useInRouterContext } from "react-router-dom";
+import LoginForm from "./LoginForm"
 
 function CheckIn() {
+  // React States
+  const [user, setUser] = useState({name: "", phone: ""})
+  const [error, setError] = useState("");
+
+  // User Login info
+  const database = [
+    {
+        phone: 4168828519
+    },
+    {
+        phone: 4164123359
+    }
+  ];
+
+
+  const Login = details => {
+      console.log(details);
+  }
+
+  const Logout = () => {
+      console.log("Logout");
+  }
+
   return (
-    <div className="contact">
-      <div class="container">
-        <div class="row align-items-center my-5">
-          <div class="col-lg-7">
-            <img
-              class="img-fluid rounded mb-4 mb-lg-0"
-              src="http://placehold.it/900x400"
-              alt=""
-            />
-          </div>
-          <div class="col-lg-5">
-            <h1 class="font-weight-light">Check In</h1>
-            <p>
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book.
-            </p>
-          </div>
-        </div>
-      </div>
+    <div className="CheckIn">
+        {(user.phone != "") ? (
+            <div className="welcome">
+                <h2>Welcome, <span>{user.name}</span></h2>
+                <button>Logout</button>
+            </div>
+        ) : (
+            <LoginForm Login={Login} error={error}/>
+        )}
     </div>
   );
 }
