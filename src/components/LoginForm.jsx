@@ -1,13 +1,29 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Form } from 'react-bootstrap';
+import firebase from "../services/firebase";
 
 function LoginForm({ Login, error }) {
-    const [details, setDetails] = useState({phone: ""});
+    const [phoneInput, setPhoneInput] = useState({phone: ""});
+    const [memberList, setMemberList] = useState([]);
+
+    useEffect(() => {
+        const memberRef = firebase.database().ref('Members')
+        
+        memberRef.on('value', (snapshot) => {
+            const members = snapshot.val();
+            const memberList = [];
+            for (let uuid in members) {
+                memberList.push({uuid, ...members[uuid]});
+            }
+            setMemberList(memberList);
+        });
+    }, []);
 
     const submitHandler = e => {
         e.preventDefault();
-
-        Login(details);
+        var member = GetMemberData(memberList, phoneInput);
+        console.log(member);
+        Login(member);
     }
 
     return (
@@ -22,7 +38,11 @@ function LoginForm({ Login, error }) {
                                Already a member? Check-in using your phone number below!
                             </div>
                             <Form.Label>Phone Number</Form.Label>
-                            <Form.Control type="email" placeholder="Enter registered phone"/>
+                            <Form.Control
+                                type="email"
+                                placeholder="Enter registered phone"
+                                onChange={(e) => {setPhoneInput(e.currentTarget.value)}}
+                            />
                         </Form.Group>
                         <Button variant="primary" type="submit" onClick={submitHandler}>
                             CHECK IN
@@ -47,6 +67,16 @@ function LoginForm({ Login, error }) {
         </div>
 
     )
+}
+
+function GetMemberData(memberList, phoneInput) {
+    for (let member of memberList) {
+        var memberPhone = member.phone;
+        if (phoneInput === memberPhone) {
+            return member;
+        }
+    }
+    return null;
 }
 
 export default LoginForm

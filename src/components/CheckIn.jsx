@@ -1,41 +1,33 @@
 import React, { useState } from "react";
-import { useInRouterContext } from "react-router-dom";
-import LoginForm from "./LoginForm"
+import LoginForm from "./LoginForm";
 
 function CheckIn() {
-  // React States
-  const [user, setUser] = useState({name: "", phone: ""})
+  const [member, setMember] = useState(null);
+  const [guest, setGuest] = useState("");
   const [error, setError] = useState("");
 
-  // User Login info
-  const database = [
-    {
-        phone: 4168828519
-    },
-    {
-        phone: 4164123359
-    }
-  ];
-
+  //const query = usersRef.orderByChild('createdAt').limit(25)
+  //const [messages] = useCollectionData(query, { idField: 'id' })
 
   const Login = details => {
-      console.log(details);
+    setMember(details);
   }
 
   const Logout = () => {
-      console.log("Logout");
+    console.log("Logout");
   }
 
   return (
     <div className="CheckIn">
-        {(user.phone != "") ? (
+        {(member != null) ? (
             <div className="welcome">
-                <h2>Welcome, <span>{user.name}</span></h2>
+                <h2>Welcome, <span>{member.name}</span></h2>
                 <button>Logout</button>
             </div>
         ) : (
             <LoginForm Login={Login} error={error}/>
         )}
+        {}
     </div>
   );
 }
