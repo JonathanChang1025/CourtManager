@@ -14,20 +14,18 @@ function CheckIn() {
   }
 
   const Logout = () => {
-    console.log("Logout");
+    setMember(null);
   }
 
   return (
     <div className="CheckIn">
-        {(member != null) ? (
+        {member != null ?
             <div className="welcome">
                 <h2>Welcome, <span>{member.name}</span></h2>
-                <button>Logout</button>
-            </div>
-        ) : (
+                <button onClick={Logout}>Logout</button>
+            </div> :
             <LoginForm Login={Login} error={error}/>
-        )}
-        {}
+        }
     </div>
   );
 }

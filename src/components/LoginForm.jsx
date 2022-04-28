@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Form } from 'react-bootstrap';
 import firebase from "../services/firebase";
+import { resources } from '../resource'
 
 function LoginForm({ Login, error }) {
     const [phoneInput, setPhoneInput] = useState({phone: ""});
     const [memberList, setMemberList] = useState([]);
+    const [showMemberLoginAlert, setShowMemberLoginAlert] = useState(false);
 
     useEffect(() => {
         const memberRef = firebase.database().ref('Members')
@@ -22,7 +24,12 @@ function LoginForm({ Login, error }) {
     const submitHandler = e => {
         e.preventDefault();
         var member = GetMemberData(memberList, phoneInput);
-        console.log(member);
+        if (member == null) {
+            setShowMemberLoginAlert(true);
+        } else {
+            setShowMemberLoginAlert(false)
+        }
+
         Login(member);
     }
 
@@ -30,38 +37,63 @@ function LoginForm({ Login, error }) {
         <div class="container">
             <div class="row justify-content-center">
                 <div class="form-group col-md-4 col-md-offset-5 align-center ">
-                    {/* ERROR! */}
-                    <Form>
-                        <Form.Group className="mb-3" controlId="formBasicEmail">
-                            <br/>
-                            <div class="alert alert-success" role="alert">
-                               Already a member? Check-in using your phone number below!
+                    <div class="card">
+                        <div class="m-3">
+                            {showMemberLoginAlert ?
+                                <div class="alert alert-danger" role="alert">
+                                    {resources.LOGIN.MEMBER.ERROR_NOT_FOUND}
+                                </div> :
+                                null
+                            }
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    {resources.LOGIN.MEMBER.TITLE}
+                                </h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    {resources.LOGIN.MEMBER.SUBTITLE}
+                                </h6>
+                                <p class="card-text">
+                                {resources.LOGIN.MEMBER.MESSAGE}
+                                </p>
                             </div>
-                            <Form.Label>Phone Number</Form.Label>
-                            <Form.Control
-                                type="email"
-                                placeholder="Enter registered phone"
-                                onChange={(e) => {setPhoneInput(e.currentTarget.value)}}
-                            />
-                        </Form.Group>
-                        <Button variant="primary" type="submit" onClick={submitHandler}>
-                            CHECK IN
-                        </Button>
-                    </Form>
+                        <Form>
+                            <Form.Group className="mb-3" controlId="formBasicEmail">
+                                <Form.Control
+                                    type="email"
+                                    placeholder="Enter registered phone"
+                                    onChange={(e) => {setPhoneInput(e.currentTarget.value)}}
+                                />
+                            </Form.Group>
+                            <Button variant="primary" type="submit" onClick={submitHandler}>
+                                {resources.LOGIN.MEMBER.BUTTON}
+                            </Button>
+                        </Form>
+                        </div>
+                    </div>
                     <br/><br/>
-                    <Form>
-                        <Form.Group className="mb-3" controlId="formBasicEmail">
-                            <br/>
-                            <div class="alert alert-secondary" role="alert">
-                               Dropping in? Enter your full name and click drop in!
+                    <div class="card">
+                        <div class="m-3">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    {resources.LOGIN.DROPIN.TITLE}
+                                </h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    {resources.LOGIN.DROPIN.SUBTITLE}
+                                </h6>
+                                <p class="card-text">
+                                    {resources.LOGIN.DROPIN.MESSAGE}
+                                </p>
                             </div>
-                            <Form.Label>Name</Form.Label>
-                            <Form.Control type="email" placeholder="Enter full name"/>
-                        </Form.Group>
-                        <Button variant="secondary" type="submit" onClick={submitHandler}>
-                            DROP IN
-                        </Button>
-                    </Form>
+                            <Form>
+                                <Form.Group className="mb-3" controlId="formBasicEmail">
+                                    <Form.Control type="email" placeholder="Enter full name"/>
+                                </Form.Group>
+                                <Button variant="secondary" type="submit" onClick={submitHandler}>
+                                    {resources.LOGIN.DROPIN.BUTTON}
+                                </Button>
+                            </Form>
+                        </div>
+                    </div>
                 </div>
             </div> 
         </div>
