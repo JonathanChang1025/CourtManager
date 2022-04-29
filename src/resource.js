@@ -47,6 +47,15 @@ export const resources = {
         }
     },
     SESSION : {
+        LOGIN : {
+            CREATE_SESSION : "Create New Badminton Session",
+            ENTER_SESSION : "Access Live Session",
+            ERROR_NOT_FOUND : "Access Denied",
+            SESSION_TEXT : "Current Session",
+            SESSION_ACTIVE : "Active",
+            SESSION_INACTIVE : "Inactive"
+
+        },
         END : {
             TITLE : "Are you sure you want to end session?",
             MESSAGE : "Ending will close this session and remove all players from this session. This action cannot be reverted and a new session will have to be created."

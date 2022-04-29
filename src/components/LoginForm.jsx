@@ -37,7 +37,7 @@ function LoginForm({ Login, error }) {
 		<div className="container">
 			<div className="row justify-content-center">
 				<div className="form-group col-md-4 col-md-offset-5 align-center ">
-					<div className="card">
+					<div className="card mt-4">
 						<div className="m-3">
 							{showMemberLoginAlert ?
 								<div className="alert alert-danger" role="alert">

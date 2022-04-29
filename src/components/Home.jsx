@@ -3,7 +3,7 @@ import { resources } from '../resource'
 
 function Home() {
   return (
-    <div className="jumbotron  m-4 p-5 rounded">
+    <div className="jumbotron m-4 p-5 rounded">
       <div className="container">
         <h1 className="display-4">{resources.HOME.SUMMARY.TITLE}</h1>
         <p className="lead">{resources.HOME.SUMMARY.MESSAGE}</p>

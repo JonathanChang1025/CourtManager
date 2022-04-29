@@ -34,11 +34,11 @@ function SessionLogin({ Login, sessionList }) {
 		<div className="container">
       <div className="row justify-content-center">
         <div className="form-group col-md-4 col-md-offset-5 align-center ">
-          <div className="card">
+          <div className="card mt-4">
             <div className="m-3">
               {showPasswordWrongAlert ?
                 <div className="alert alert-danger" role="alert">
-                  Access Denied
+                  {resources.SESSION.LOGIN.ERROR_NOT_FOUND}
                 </div> :
                 null
               }
@@ -52,17 +52,27 @@ function SessionLogin({ Login, sessionList }) {
               {sessionList.length != 0 ?
                 <div>
                   <button type="button" className="btn btn-primary btn-block" onClick={accessSessionHandler}>
-                    Access Live Session
+                  {resources.SESSION.LOGIN.ENTER_SESSION}
                   </button>
                   <br/>
-                  <h6>Current Session <span className="badge bg-success text-light">Active</span></h6>
+                  <h6>
+                    {resources.SESSION.LOGIN.SESSION_TEXT}&nbsp;
+                    <span className="badge bg-success text-light">
+                      {resources.SESSION.LOGIN.SESSION_ACTIVE}
+                    </span>
+                  </h6>
                 </div> :
                 <div>
                   <button type="button" className="btn btn-success btn-block" onClick={createAndAccessSessionHandler}>
-                    Create New Badminton Session
+                    {resources.SESSION.LOGIN.CREATE_SESSION}
                   </button>
                   <br/>
-                  <h6>Current Session <span className="badge bg-secondary text-light">Inactive</span></h6>
+                  <h6>
+                    {resources.SESSION.LOGIN.SESSION_TEXT}&nbsp;
+                    <span className="badge bg-secondary text-light">
+                      {resources.SESSION.LOGIN.SESSION_INACTIVE}
+                    </span>
+                  </h6>
                 </div>
                 
               }
