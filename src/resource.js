@@ -60,5 +60,11 @@ export const resources = {
             TITLE : "Are you sure you want to end session?",
             MESSAGE : "Ending will close this session and remove all players from this session. This action cannot be reverted and a new session will have to be created."
         }
+    },
+    QR : {
+        TITLE : "Use your phone to check-in",
+        SUBTITLE : "Scan the QR Code below or go to: ",
+        URL : "https://bit.ly/39gvmzG",
+        LINK : "https://jonathanchang1025.github.io/court-manager/#/checkin"
     }
 }
