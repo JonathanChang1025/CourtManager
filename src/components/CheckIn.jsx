@@ -51,8 +51,8 @@ function CheckIn() {
         </> :
         <div className="m-4 p-5 bg-secondary text-white rounded">
           <div className="container">
-            <h1 className="display-4">{resources.LOGIN.INACTIVE.TITLE}</h1>
-            <p className="lead">{resources.LOGIN.INACTIVE.MESSAGE}</p>
+            <h1 className="display-4">{resources.CHECKIN.INACTIVE.TITLE}</h1>
+            <p className="lead">{resources.CHECKIN.INACTIVE.MESSAGE}</p>
           </div>
         </div>
       }

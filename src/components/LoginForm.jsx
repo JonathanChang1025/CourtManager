@@ -41,19 +41,19 @@ function LoginForm({ Login, error }) {
 						<div className="m-3">
 							{showMemberLoginAlert ?
 								<div className="alert alert-danger" role="alert">
-									{resources.LOGIN.MEMBER.ERROR_NOT_FOUND}
+									{resources.CHECKIN.MEMBER.ERROR_NOT_FOUND}
 								</div> :
 								null
 							}
 							<div className="card-body">
 								<h5 className="card-title">
-									{resources.LOGIN.MEMBER.TITLE}
+									{resources.CHECKIN.MEMBER.TITLE}
 								</h5>
 								<h6 className="card-subtitle mb-2 text-muted">
-									{resources.LOGIN.MEMBER.SUBTITLE}
+									{resources.CHECKIN.MEMBER.SUBTITLE}
 								</h6>
 								<p className="card-text">
-									{resources.LOGIN.MEMBER.MESSAGE}
+									{resources.CHECKIN.MEMBER.MESSAGE}
 								</p>
 							</div>
 							<Form>
@@ -65,7 +65,7 @@ function LoginForm({ Login, error }) {
 										/>
 								</Form.Group>
 								<Button variant="primary" type="submit" onClick={submitHandler}>
-									{resources.LOGIN.MEMBER.BUTTON}
+									{resources.CHECKIN.MEMBER.BUTTON}
 								</Button>
 							</Form>
 						</div>
@@ -75,13 +75,13 @@ function LoginForm({ Login, error }) {
 						<div className="m-3">
 							<div className="card-body">
 								<h5 className="card-title">
-									{resources.LOGIN.DROPIN.TITLE}
+									{resources.CHECKIN.DROPIN.TITLE}
 								</h5>
 								<h6 className="card-subtitle mb-2 text-muted">
-									{resources.LOGIN.DROPIN.SUBTITLE}
+									{resources.CHECKIN.DROPIN.SUBTITLE}
 								</h6>
 								<p className="card-text">
-									{resources.LOGIN.DROPIN.MESSAGE}
+									{resources.CHECKIN.DROPIN.MESSAGE}
 								</p>
 							</div>
 							<Form>
@@ -89,7 +89,7 @@ function LoginForm({ Login, error }) {
 									<Form.Control type="email" placeholder="Enter full name"/>
 								</Form.Group>
 								<Button variant="secondary" type="submit" onClick={submitHandler}>
-									{resources.LOGIN.DROPIN.BUTTON}
+									{resources.CHECKIN.DROPIN.BUTTON}
 								</Button>
 							</Form>
 						</div>

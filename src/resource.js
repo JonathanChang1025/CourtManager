@@ -25,7 +25,7 @@ export const resources = {
             }
         }
     },
-    LOGIN : {
+    CHECKIN : {
         INACTIVE : {
             TITLE : "Oh no!",
             MESSAGE : "There is no live session. Please notify admin to start a new session to check-in 🙂"
