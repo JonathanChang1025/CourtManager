@@ -10,14 +10,24 @@ function SessionLogin({ Login, sessionList }) {
 	const accessSessionHandler = e => {
 		e.preventDefault();
 
-    LoginIfPasswordMatch(Login, setShowPasswordWrongAlert, passwordInput);
+    if (passwordInput === process.env.REACT_APP_ADMIN_PASSWORD) {
+      setShowPasswordWrongAlert(false);
+      Login();
+    } else {
+      setShowPasswordWrongAlert(true);
+    }
 	}
 
   const createAndAccessSessionHandler = e => {
     e.preventDefault();
 
-    LoginIfPasswordMatch(Login, setShowPasswordWrongAlert, passwordInput);
-    CreateSession();
+    if (passwordInput === process.env.REACT_APP_ADMIN_PASSWORD) {
+      setShowPasswordWrongAlert(false);
+      CreateSession();
+      Login();
+    } else {
+      setShowPasswordWrongAlert(true);
+    }
   }
 
 	return (
@@ -64,15 +74,6 @@ function CreateSession() {
     created_at : Date(),
     active : true
   })
-}
-
-function LoginIfPasswordMatch(Login, setShowPasswordWrongAlert, passwordInput) {
-  if (passwordInput === process.env.REACT_APP_ADMIN_PASSWORD) {
-    setShowPasswordWrongAlert(false);
-    Login();
-  } else {
-    setShowPasswordWrongAlert(true);
-  }
 }
 
 export default SessionLogin
