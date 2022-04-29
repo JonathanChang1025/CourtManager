@@ -31,13 +31,13 @@ function SessionLogin({ Login, sessionList }) {
   }
 
 	return (
-		<div class="container">
-      <div class="row justify-content-center">
-        <div class="form-group col-md-4 col-md-offset-5 align-center ">
-          <div class="card">
-            <div class="m-3">
+		<div className="container">
+      <div className="row justify-content-center">
+        <div className="form-group col-md-4 col-md-offset-5 align-center ">
+          <div className="card">
+            <div className="m-3">
               {showPasswordWrongAlert ?
-                <div class="alert alert-danger" role="alert">
+                <div className="alert alert-danger" role="alert">
                   Access Denied
                 </div> :
                 null
@@ -51,18 +51,18 @@ function SessionLogin({ Login, sessionList }) {
               <br/>
               {sessionList.length != 0 ?
                 <div>
-                  <button type="button" class="btn btn-primary btn-block" onClick={accessSessionHandler}>
+                  <button type="button" className="btn btn-primary btn-block" onClick={accessSessionHandler}>
                     Access Live Session
                   </button>
                   <br/>
-                  <h6>Current Session <span class="badge bg-success text-light">Active</span></h6>
+                  <h6>Current Session <span className="badge bg-success text-light">Active</span></h6>
                 </div> :
                 <div>
-                  <button type="button" class="btn btn-success btn-block" onClick={createAndAccessSessionHandler}>
+                  <button type="button" className="btn btn-success btn-block" onClick={createAndAccessSessionHandler}>
                     Create New Badminton Session
                   </button>
                   <br/>
-                  <h6>Current Session <span class="badge bg-secondary text-light">Inactive</span></h6>
+                  <h6>Current Session <span className="badge bg-secondary text-light">Inactive</span></h6>
                 </div>
                 
               }

@@ -34,25 +34,25 @@ function LoginForm({ Login, error }) {
 	}
 
 	return (
-		<div class="container">
-			<div class="row justify-content-center">
-				<div class="form-group col-md-4 col-md-offset-5 align-center ">
-					<div class="card">
-						<div class="m-3">
+		<div className="container">
+			<div className="row justify-content-center">
+				<div className="form-group col-md-4 col-md-offset-5 align-center ">
+					<div className="card">
+						<div className="m-3">
 							{showMemberLoginAlert ?
-								<div class="alert alert-danger" role="alert">
+								<div className="alert alert-danger" role="alert">
 									{resources.LOGIN.MEMBER.ERROR_NOT_FOUND}
 								</div> :
 								null
 							}
-							<div class="card-body">
-								<h5 class="card-title">
+							<div className="card-body">
+								<h5 className="card-title">
 									{resources.LOGIN.MEMBER.TITLE}
 								</h5>
-								<h6 class="card-subtitle mb-2 text-muted">
+								<h6 className="card-subtitle mb-2 text-muted">
 									{resources.LOGIN.MEMBER.SUBTITLE}
 								</h6>
-								<p class="card-text">
+								<p className="card-text">
 									{resources.LOGIN.MEMBER.MESSAGE}
 								</p>
 							</div>
@@ -71,16 +71,16 @@ function LoginForm({ Login, error }) {
 						</div>
 					</div>
 					<br/>
-					<div class="card">
-						<div class="m-3">
-							<div class="card-body">
-								<h5 class="card-title">
+					<div className="card">
+						<div className="m-3">
+							<div className="card-body">
+								<h5 className="card-title">
 									{resources.LOGIN.DROPIN.TITLE}
 								</h5>
-								<h6 class="card-subtitle mb-2 text-muted">
+								<h6 className="card-subtitle mb-2 text-muted">
 									{resources.LOGIN.DROPIN.SUBTITLE}
 								</h6>
-								<p class="card-text">
+								<p className="card-text">
 									{resources.LOGIN.DROPIN.MESSAGE}
 								</p>
 							</div>

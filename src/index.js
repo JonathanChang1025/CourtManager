@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker.js";
 import { HashRouter as Router, Route, Routes } from "react-router-dom";
@@ -12,7 +12,8 @@ import {
   QRScan
 } from "./components";
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
   <Router>
     <Navigation />
     <Routes>
@@ -22,8 +23,6 @@ ReactDOM.render(
       <Route path="/qrscan" element={<QRScan />} />
     </Routes>
   </Router>,
-
-  document.getElementById("root")
 );
 
 serviceWorker.unregister();

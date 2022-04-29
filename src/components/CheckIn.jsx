@@ -49,10 +49,10 @@ function CheckIn() {
               <LoginForm Login={Login} error={error}/>
           }
         </> :
-        <div class="m-4 p-5 bg-secondary text-white rounded">
-          <div class="container">
-            <h1 class="display-4">{resources.LOGIN.INACTIVE.TITLE}</h1>
-            <p class="lead">{resources.LOGIN.INACTIVE.MESSAGE}</p>
+        <div className="m-4 p-5 bg-secondary text-white rounded">
+          <div className="container">
+            <h1 className="display-4">{resources.LOGIN.INACTIVE.TITLE}</h1>
+            <p className="lead">{resources.LOGIN.INACTIVE.MESSAGE}</p>
           </div>
         </div>
       }
