@@ -6,9 +6,6 @@ function CheckIn() {
   const [guest, setGuest] = useState("");
   const [error, setError] = useState("");
 
-  //const query = usersRef.orderByChild('createdAt').limit(25)
-  //const [messages] = useCollectionData(query, { idField: 'id' })
-
   const Login = details => {
     setMember(details);
   }

@@ -7,9 +7,9 @@ function Home() {
       <div class="row justify-content-center">
         <div class="mx-5">
           <div class="card text-center">
-          <div class="card-header"></div>
+          <h5 class="card-header">{resources.HOME.SUMMARY.TITLE}</h5>
             <div class="card-body">
-              <h5 class="card-title">{resources.HOME.SUMMARY.TITLE}</h5>
+              <h5 class="card-title"></h5>
               <p class="card-text">{resources.HOME.SUMMARY.MESSAGE}</p>
             </div>
           </div>

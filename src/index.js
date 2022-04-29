@@ -7,7 +7,7 @@ import {
   Navigation,
   Footer,
   Home,
-  Court,
+  Session,
   CheckIn,
   QRScan
 } from "./components";
@@ -17,7 +17,7 @@ ReactDOM.render(
     <Navigation />
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/court" element={<Court />} />
+      <Route path="/session" element={<Session />} />
       <Route path="/checkin" element={<CheckIn />} />
       <Route path="/qrscan" element={<QRScan />} />
     </Routes>
