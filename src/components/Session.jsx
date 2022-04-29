@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Form } from 'react-bootstrap';
 import { resources } from '../resource'
 import SessionLogin from "./SessionLogin";
+import EndSession from "./EndSession";
 import firebase from "../services/firebase";
 
 function Session() {
@@ -38,9 +39,9 @@ function Session() {
   return (
     <div>
       {loggedIn ?
-        <button type="button" class="btn btn-danger btn-block" onClick={Logout}>
-          End Session
-        </button> :
+        <div>
+          <EndSession Logout={Logout}></EndSession>
+        </div> :
         <SessionLogin Login={Login} sessionList={sessionList}/>
       }
     </div>

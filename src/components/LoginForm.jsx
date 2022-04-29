@@ -70,7 +70,7 @@ function LoginForm({ Login, error }) {
 							</Form>
 						</div>
 					</div>
-					<br/><br/>
+					<br/>
 					<div class="card">
 						<div class="m-3">
 							<div class="card-body">

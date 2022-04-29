@@ -34,33 +34,40 @@ function SessionLogin({ Login, sessionList }) {
 		<div class="container">
       <div class="row justify-content-center">
         <div class="form-group col-md-4 col-md-offset-5 align-center ">
-          {showPasswordWrongAlert ?
-            <div class="alert alert-danger" role="alert">
-              Access Denied
-            </div> :
-            null
-          }
-          <Form>
-            <Form.Control
-              placeholder="Enter admin password"
-              onChange={(e) => {setPasswordInput(e.currentTarget.value)}}
-              />
-          </Form>
-          {sessionList.length != 0 ?
-            <div>
-              <button type="button" class="btn btn-primary btn-block" onClick={accessSessionHandler}>
-                Access Live Session
-              </button>
-              <h6>Current Session <span class="badge bg-success text-light">Active</span></h6>
-            </div> :
-            <div>
-            <button type="button" class="btn btn-success btn-block" onClick={createAndAccessSessionHandler}>
-              Create New Badminton Session
-            </button>
-            <h6>Current Session <span class="badge bg-secondary text-light">Inactive</span></h6>
+          <div class="card">
+            <div class="m-3">
+              {showPasswordWrongAlert ?
+                <div class="alert alert-danger" role="alert">
+                  Access Denied
+                </div> :
+                null
+              }
+              <Form>
+                <Form.Control
+                  placeholder="Enter admin password"
+                  onChange={(e) => {setPasswordInput(e.currentTarget.value)}}
+                  />
+              </Form>
+              <br/>
+              {sessionList.length != 0 ?
+                <div>
+                  <button type="button" class="btn btn-primary btn-block" onClick={accessSessionHandler}>
+                    Access Live Session
+                  </button>
+                  <br/>
+                  <h6>Current Session <span class="badge bg-success text-light">Active</span></h6>
+                </div> :
+                <div>
+                  <button type="button" class="btn btn-success btn-block" onClick={createAndAccessSessionHandler}>
+                    Create New Badminton Session
+                  </button>
+                  <br/>
+                  <h6>Current Session <span class="badge bg-secondary text-light">Inactive</span></h6>
+                </div>
+                
+              }
             </div>
-            
-          }
+          </div>
         </div>
       </div>
     </div>

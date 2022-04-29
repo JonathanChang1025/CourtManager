@@ -20,5 +20,11 @@ export const resources = {
             MESSAGE: "Enter your full name and click drop in",
             BUTTON : "Drop In"
         }
+    },
+    SESSION : {
+        END : {
+            TITLE : "Are you sure you want to end session?",
+            MESSAGE : "Ending will close this session and remove all players from this session. This action cannot be reverted and a new session will have to be created."
+        }
     }
 }
