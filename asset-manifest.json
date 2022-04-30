@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/court-manager/static/css/main.e6c13ad2.css",
-    "main.js": "/court-manager/static/js/main.9721218e.js",
+    "main.js": "/court-manager/static/js/main.ca4fb757.js",
     "index.html": "/court-manager/index.html",
     "main.e6c13ad2.css.map": "/court-manager/static/css/main.e6c13ad2.css.map",
-    "main.9721218e.js.map": "/court-manager/static/js/main.9721218e.js.map"
+    "main.ca4fb757.js.map": "/court-manager/static/js/main.ca4fb757.js.map"
   },
   "entrypoints": [
     "static/css/main.e6c13ad2.css",
-    "static/js/main.9721218e.js"
+    "static/js/main.ca4fb757.js"
   ]
 }
