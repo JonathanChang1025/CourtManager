@@ -20,7 +20,7 @@ export const resources = {
                 CAPACITY : "Maximum of 30 people in the gym at once",
                 DROPIN_COST : "$6/Sunday",
                 MEMBER_COST : "$5/Sunday, paid in full on the first Sunday of each month",
-                EQUIPMENT : `Yellow nylon plastic shuttlecocks are providedBadminton Shoes are mandatory on court.
+                EQUIPMENT : `Yellow nylon plastic shuttlecocks are provided. Badminton Shoes are mandatory on court.
                 Rackets and other equipment are not provided.`
             }
         }
@@ -58,7 +58,8 @@ export const resources = {
         },
         END : {
             TITLE : "Are you sure you want to end session?",
-            MESSAGE : "Ending will close this session and remove all players from this session. This action cannot be reverted and a new session will have to be created."
+            MESSAGE : `Ending will close this session and remove all players from this session. This action cannot be
+            reverted and a new session will have to be created.`
         }
     },
     QR : {

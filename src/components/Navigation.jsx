@@ -8,14 +8,14 @@ function Navigation() {
     <div className="navigation">
       <nav className="navbar navbar-expand navbar-dark bg-dark">
         <div className="container">
-        <a class="navbar-brand" href="#">
+        <a className="navbar-brand" href="#">
           <BrowserView>
-            <img src={logo} width="30" height="30" class="d-inline-block align-top" alt=""/>
+            <img src={logo} width="30" height="30" className="d-inline-block align-top" alt=""/>
             &nbsp;&nbsp;
             Court Manager
           </BrowserView>
           <MobileView>
-            <img src={logo} width="30" height="30" class="d-inline-block align-top" alt=""/>
+            <img src={logo} width="30" height="30" className="d-inline-block align-top" alt=""/>
           </MobileView>
         </a>
           <div>

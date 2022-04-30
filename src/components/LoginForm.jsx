@@ -3,7 +3,7 @@ import { Button, Form } from 'react-bootstrap';
 import firebase from "../services/firebase";
 import { resources } from '../resource';
 
-function LoginForm({ Login, error }) {
+function LoginForm({ Login }) {
 	const [phoneInput, setPhoneInput] = useState("");
 	const [memberList, setMemberList] = useState([]);
 	const [showMemberLoginAlert, setShowMemberLoginAlert] = useState(false);
@@ -21,7 +21,7 @@ function LoginForm({ Login, error }) {
 		});
 	}, []);
 
-	const submitHandler = e => {
+	const memberSubmitHandler = e => {
 		e.preventDefault();
 		var member = GetMemberData(memberList, phoneInput);
 		if (member == null) {
@@ -29,8 +29,11 @@ function LoginForm({ Login, error }) {
 		} else {
 			setShowMemberLoginAlert(false)
 		}
+		Login(true, member);
+	}
 
-		Login(member);
+	const closeMemberLoginAlert = () => {
+		setShowMemberLoginAlert(false);
 	}
 
 	return (
@@ -41,6 +44,9 @@ function LoginForm({ Login, error }) {
 						<div className="m-3">
 							{showMemberLoginAlert ?
 								<div className="alert alert-danger" role="alert">
+									<button type="button" className="close" onClick={closeMemberLoginAlert}>
+										<span aria-hidden="true">&times;</span>
+									</button>
 									{resources.CHECKIN.MEMBER.ERROR_NOT_FOUND}
 								</div> :
 								null
@@ -64,7 +70,7 @@ function LoginForm({ Login, error }) {
 										onChange={(e) => {setPhoneInput(e.currentTarget.value)}}
 										/>
 								</Form.Group>
-								<Button variant="primary" type="submit" onClick={submitHandler}>
+								<Button variant="primary" type="submit" onClick={memberSubmitHandler}>
 									{resources.CHECKIN.MEMBER.BUTTON}
 								</Button>
 							</Form>
@@ -88,7 +94,7 @@ function LoginForm({ Login, error }) {
 								<Form.Group className="mb-3" controlId="formBasicEmail">
 									<Form.Control type="email" placeholder="Enter full name"/>
 								</Form.Group>
-								<Button variant="secondary" type="submit" onClick={submitHandler}>
+								<Button variant="secondary" type="submit" onClick={memberSubmitHandler}>
 									{resources.CHECKIN.DROPIN.BUTTON}
 								</Button>
 							</Form>
