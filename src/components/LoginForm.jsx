@@ -3,7 +3,7 @@ import { Button, Form } from 'react-bootstrap';
 import firebase from "../services/firebase";
 import { resources } from '../resource';
 
-function LoginForm({ Login }) {
+function LoginForm(props) {
 	const [phoneInput, setPhoneInput] = useState("");
 	const [memberList, setMemberList] = useState([]);
 	const [showMemberLoginAlert, setShowMemberLoginAlert] = useState(false);
@@ -29,7 +29,7 @@ function LoginForm({ Login }) {
 		} else {
 			setShowMemberLoginAlert(false)
 		}
-		Login(true, member);
+		props.Login(true, member);
 	}
 
 	const closeMemberLoginAlert = () => {

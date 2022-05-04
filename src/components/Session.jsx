@@ -50,7 +50,10 @@ function Session() {
 
 function DeleteSession() {
   const sessionRef = firebase.database().ref('Sessions');
+  const playerRef = firebase.database().ref('Players');
+
   sessionRef.remove();
+  playerRef.remove();
 }
 
 export default Session;

@@ -45,6 +45,7 @@ function SessionLogin({ Login, sessionList }) {
               <Form>
                 <Form.Control
                   placeholder="Enter admin password"
+                  type="password"
                   onChange={(e) => {setPasswordInput(e.currentTarget.value)}}
                   />
               </Form>
@@ -74,7 +75,6 @@ function SessionLogin({ Login, sessionList }) {
                     </span>
                   </h6>
                 </div>
-                
               }
             </div>
           </div>

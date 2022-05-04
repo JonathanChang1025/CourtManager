@@ -6,50 +6,40 @@ import firebase from "../services/firebase";
 function CheckIn() {
   const [sessionActive, setSessionActive] = useState(false);
   const [sessionUUID, setSessionUUID] = useState("");
-  const [playerList, setPlayerList] = useState([]);
-  const [player, setPlayer] = useState({loginMember: null, approved: null, database: null, data: null});
-
-
+  const [playerData, setPlayerData] = useState(null);
+  
   useEffect(() => {
-		FetchSessions(setSessionActive, setSessionUUID);
-    FetchPlayers(setPlayerList);
+		SetSessionListener(setSessionActive, setSessionUUID);
 	}, []);
 
-  const Login = (playerType, playerDetails) => {
-    var playerData = {loginMember: playerType, approved: playerType, data: playerDetails};
-
-    if (playerData.data != null) {
-      FetchPlayers(setPlayerList);
-      playerList.forEach((curr_player) => {
-        if (curr_player.member_uuid === playerData.data.uuid) {
-          playerData = {...playerData, database: curr_player};
-        }
-      })
-      setPlayer(playerData);
-
-      if (playerData.database == null) {
-        CreatePlayer(playerData.data.uuid, sessionUUID);
-      } else {
-        SetPlayerActivity(playerData, true);
-      }
+  const Login = (playerType, userDetails) => {
+    if (userDetails != null) {
+      FetchPlayerData(setPlayerData, userDetails, sessionUUID);
     } else {
-      console.log("player data is null");
+      console.log("userDetails is null: Memeber does not exist in member table database");
     }
   }
 
   const Logout = () => {
-    SetPlayerActivity(player, false);
-    setPlayer({loginMember: null, approved: null, database: null, data: null});
+    playerData.active = false;
+    UpdatePlayerData(playerData);
+    setPlayerData(null);
+    StopPlayerListener(playerData);
+  }
+
+  const Console = () => {
+    console.log(playerData);
   }
 
   return (
     <div className="CheckIn">
       {sessionActive ?
         <>
-          {player.data != null ?
+          {playerData != null ?
             <div className="welcome">
-                <h2>Welcome, <span>{player.data.name}</span></h2>
+                <h2>Welcome, <span>{playerData.name}</span></h2>
                 <button onClick={Logout}>Check out</button>
+                <button onClick={Console}>Console.log</button>
             </div> :
             <LoginForm Login={Login}/>
           }
@@ -65,57 +55,103 @@ function CheckIn() {
   );
 }
 
-function FetchSessions(setSessionActive, setSessionUUID) {
+function SetSessionListener(setSessionActive, setSessionUUID) {
   const sessionRef = firebase.database().ref('Sessions')
 
-		sessionRef.on('value', (snapshot) => {
-			const sessions = snapshot.val();
-			const sessionList = [];
-			for (let uuid in sessions) {
-				sessionList.push({uuid, ...sessions[uuid]});
-        setSessionUUID(uuid); // In the future we'll have more sessions not just one
-			}
+  sessionRef.on('value', (snapshot) => {
+    const sessions = snapshot.val();
+    const sessionList = [];
+    for (let uuid in sessions) {
+      sessionList.push({uuid, ...sessions[uuid]});
+      setSessionUUID(uuid); // In the future we'll have more sessions not just one
+    }
 
-      if (!sessionList.length) {
-        setSessionActive(false);
-      } else {
-        setSessionActive(true);
-      }
-		});
+    if (!sessionList.length) {
+      setSessionActive(false);
+    } else {
+      setSessionActive(true);
+    }
+  });
 }
 
-function FetchPlayers(setPlayerList) {
-  const playerRef = firebase.database().ref('Players')
+function StartPlayerListener(setPlayerData, playerData) {
+  const playerRef = firebase.database().ref('Players').child(playerData.uuid)
 
   playerRef.on('value', (snapshot) => {
-			const players = snapshot.val();
-			const playerList = [];
-			for (let uuid in players) {
-				playerList.push({uuid, ...players[uuid]});
-			}
-
-      setPlayerList(playerList);
-		});
+    const player = snapshot.val();
+    console.log(player);
+    if (!player.active) {
+      setPlayerData(null);
+      StopPlayerListener(playerData);
+    }
+  });
 }
 
-function CreatePlayer(member_uuid, session_uuid) {
-	const playerRef = firebase.database().ref('Players');
+function StopPlayerListener(playerData) {
+  const playerRef = firebase.database().ref('Players').child(playerData.uuid)
+  playerRef.off('value');
+}
+
+function FetchPlayerData(setPlayerData, userFullDetails, sessionUUID) {
+  const playerRef = firebase.database().ref('Players')
+
+  playerRef.once('value', (snapshot) => {
+    const players = snapshot.val();
+    var playerData = null;
+
+    for (let uuid in players) {
+      if (userFullDetails.uuid === players[uuid].user_uuid) {
+        playerData = {uuid: uuid, ...players[uuid]};
+        playerData.active = true;
+        UpdatePlayerData(playerData);
+        setPlayerData(playerData);
+        StartPlayerListener(setPlayerData, playerData);
+        break;
+      }
+    }
+
+    if (playerData == null) {
+      CreatePlayer(userFullDetails, sessionUUID);
+
+      // Still need to fetch again from firebase because we want to get the generated player UUID
+      playerRef.once('value', (snapshot) => {
+        const players = snapshot.val();
+   
+        for (let uuid in players) {
+          if (userFullDetails.uuid === players[uuid].user_uuid) {
+            playerData = {uuid: uuid, ...players[uuid]};
+            setPlayerData(playerData);
+            StartPlayerListener(playerData);
+            break;
+          }
+        }
+      });
+    }
+  });
+}
+
+function CreatePlayer(playerFullDetails, sessionUUID) {
+  const playerRef = firebase.database().ref('Players')
+  
+  const {uuid, ...playerDetails} = playerFullDetails;
+  
   playerRef.push({
-    member_uuid : member_uuid,
+    user_uuid : uuid,
     created_at : Date(),
     active : true,
-    session_uuid : session_uuid,
+    session_uuid : sessionUUID,
     total_games : 0,
     current_court : -1,
-    next_court : -1
-  })
+    next_court : -1,
+    ...playerDetails
+  });
 }
 
-function SetPlayerActivity(player, activity) {
-  const databasePlayerData = player.database;
-  const {uuid, ...playerData} = databasePlayerData
-  const inactivePlayerData = {...playerData, active: activity};
+function UpdatePlayerData(playerFullData) {
   const playerRef = firebase.database().ref('Players');
+  const {uuid, ...playerData} = playerFullData
+  const inactivePlayerData = {...playerData};
+
   playerRef.child(uuid).set(inactivePlayerData);
 }
 
