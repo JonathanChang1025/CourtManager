@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import LoginForm from "./LoginForm";
 import { resources } from '../resource'
 import firebase from "../services/firebase";
+import { Navigation } from "./";
 
 function CheckIn() {
   const [sessionActive, setSessionActive] = useState(false);
@@ -9,7 +10,7 @@ function CheckIn() {
   const [playerData, setPlayerData] = useState(null);
   
   useEffect(() => {
-		SetSessionListener(setSessionActive, setSessionUUID);
+		SetSessionsListener(setSessionActive, setSessionUUID);
 	}, []);
 
   const Login = (playerType, userDetails) => {
@@ -32,30 +33,33 @@ function CheckIn() {
   }
 
   return (
-    <div className="CheckIn">
-      {sessionActive ?
-        <>
-          {playerData != null ?
-            <div className="welcome">
-                <h2>Welcome, <span>{playerData.name}</span></h2>
-                <button onClick={Logout}>Check out</button>
-                <button onClick={Console}>Console.log</button>
-            </div> :
-            <LoginForm Login={Login}/>
-          }
-        </> :
-        <div className="m-4 p-5 bg-secondary text-white rounded">
-          <div className="container">
-            <h1 className="display-4">{resources.CHECKIN.INACTIVE.TITLE}</h1>
-            <p className="lead">{resources.CHECKIN.INACTIVE.MESSAGE}</p>
+    <>
+      <Navigation/>
+      <div className="CheckIn">
+        {sessionActive ?
+          <>
+            {playerData != null ?
+              <div className="welcome">
+                  <h2>Welcome, <span>{playerData.name}</span></h2>
+                  <button onClick={Logout}>Check out</button>
+                  <button onClick={Console}>Console.log</button>
+              </div> :
+              <LoginForm Login={Login}/>
+            }
+          </> :
+          <div className="m-4 p-5 bg-secondary text-white rounded">
+            <div className="container">
+              <h1 className="display-4">{resources.CHECKIN.INACTIVE.TITLE}</h1>
+              <p className="lead">{resources.CHECKIN.INACTIVE.MESSAGE}</p>
+            </div>
           </div>
-        </div>
-      }
-    </div>
+        }
+      </div>
+    </>
   );
 }
 
-function SetSessionListener(setSessionActive, setSessionUUID) {
+function SetSessionsListener(setSessionActive, setSessionUUID) {
   const sessionRef = firebase.database().ref('Sessions')
 
   sessionRef.on('value', (snapshot) => {

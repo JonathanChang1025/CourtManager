@@ -15,12 +15,11 @@ import {
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Router>
-    <Navigation />
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/session" element={<Session />} />
-      <Route path="/checkin" element={<CheckIn />} />
-      <Route path="/qrscan" element={<QRScan />} />
+      <Route path="/" element={<Home />}/>
+      <Route path="/session" element={<Session/>}/>
+      <Route path="/checkin" element={<CheckIn/>}/>
+      <Route path="/qrscan" element={<QRScan/>}/>
     </Routes>
   </Router>,
 );
