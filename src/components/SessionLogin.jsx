@@ -50,7 +50,7 @@ function SessionLogin({ Login, sessionList }) {
                   />
               </Form>
               <br/>
-              {sessionList.length != 0 ?
+              {sessionList.length !== 0 ?
                 <div>
                   <button type="button" className="btn btn-primary btn-block" onClick={accessSessionHandler}>
                   {resources.SESSION.LOGIN.ENTER_SESSION}
