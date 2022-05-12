@@ -12,7 +12,8 @@ var numOfCourts = 3;
 function Session() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [sessionList, setSessionList] = useState([]);
-  const [currConfig, setCurrConfig] = useState([[]]);
+  const [playersPlaying, setPlayersPlaying] = useState([[]]);
+  const [playersInQueue, setPlayersInQueue] = useState([[]]);
   const [playerList, setPlayerList] = useState([]);
 
   useEffect(() => {
@@ -35,6 +36,15 @@ function Session() {
     setLoggedIn(false);
   }
 
+  function handleOnDragEnd(result) {
+    if (!result.destination) return;
+    const items = Array.from(playerList);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setPlayerList(items);
+  }
+
   return (
     <>
       {loggedIn ?
@@ -51,10 +61,10 @@ function Session() {
                           <ListGroup.Item as="li" className="list-group-item list-group-item-success">
                             Court {i+1}
                           </ListGroup.Item>
-                          <ShowCourtList courtId={i} slotId={0} currConfig={currConfig}/>
-                          <ShowCourtList courtId={i} slotId={1} currConfig={currConfig}/>
-                          <ShowCourtList courtId={i} slotId={2} currConfig={currConfig}/>
-                          <ShowCourtList courtId={i} slotId={3} currConfig={currConfig}/>
+                          <ShowCourtList courtId={i} slotId={0} playersConfig={playersPlaying}/>
+                          <ShowCourtList courtId={i} slotId={1} playersConfig={playersPlaying}/>
+                          <ShowCourtList courtId={i} slotId={2} playersConfig={playersPlaying}/>
+                          <ShowCourtList courtId={i} slotId={3} playersConfig={playersPlaying}/>
                         </ListGroup>
                       )}
                     </div>
@@ -71,10 +81,10 @@ function Session() {
                       {[...Array(numOfCourts)].map((x, i) =>
                         <ListGroup as="ul" key={i} className="list-group flex-fill m-2">
                           <ListGroup.Item as="li" className="list-group-item list-group-item-primary">Court {i+1}</ListGroup.Item>
-                          <ShowCourtList courtId={i} slotId={0} currConfig={currConfig}/>
-                          <ShowCourtList courtId={i} slotId={1} currConfig={currConfig}/>
-                          <ShowCourtList courtId={i} slotId={2} currConfig={currConfig}/>
-                          <ShowCourtList courtId={i} slotId={3} currConfig={currConfig}/>
+                          <ShowCourtList courtId={i} slotId={0} playersConfig={playersInQueue}/>
+                          <ShowCourtList courtId={i} slotId={1} playersConfig={playersInQueue}/>
+                          <ShowCourtList courtId={i} slotId={2} playersConfig={playersInQueue}/>
+                          <ShowCourtList courtId={i} slotId={3} playersConfig={playersInQueue}/>
                         </ListGroup>
                       )}
                     </div>
@@ -88,31 +98,43 @@ function Session() {
                 <Card.Body className="p-0">
                   <div className="col">
                     <div className="row flex-grow">
-                      <ListGroup as="ul" className="list-group flex-fill m-2">
-                        {
-                          playerList.map((player) =>
-                            <ListGroup.Item 
-                              as="li"
-                              key={player.uuid}
-                              className="list-group-item
-                                d-flex
-                                justify-content-between
-                                align-items-center
-                                list-group-item-light"
-                            >
-                              {player.name}
-                              <span className="badge badge-primary badge-pill">{player.total_games}</span>
-                            </ListGroup.Item>
-                          )
-                        }
-                      </ListGroup>
+                      <DragDropContext onDragEnd={handleOnDragEnd}>
+                        <Droppable droppableId="players">
+                          {(provided) => (
+                            <ul className="list-group flex-fill m-2" {...provided.droppableProps} ref={provided.innerRef}>
+                              {
+                                playerList.map((player, index) =>
+                                  <Draggable key={player.uuid} draggableId={player.uuid} index={index}>
+                                    {(provided) => (
+                                      <li
+                                        {...provided.draggableProps}
+                                        {...provided.dragHandleProps}
+                                        ref={provided.innerRef}
+                                        as="li"
+                                        className="list-group-item
+                                          d-flex
+                                          justify-content-between
+                                          align-items-center
+                                          list-group-item-light"
+                                      >
+                                        {player.name}
+                                        <span className="badge badge-primary badge-pill">{player.total_games}</span>
+                                      </li>
+                                    )}
+                                  </Draggable>
+                                )
+                              }
+                              {provided.placeholder}
+                            </ul>
+                          )}
+                        </Droppable>
+                      </DragDropContext>
                     </div>
                   </div>
                 </Card.Body>
               </Card>
             </div>
           </div>
-          <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
           <EndSession Logout={Logout}></EndSession>
         </div>:
         <>
@@ -135,24 +157,18 @@ function DeleteSession() {
 function ShowCourtList(props) {
   const courtId = props.courtId;
   const slotId = props.slotId;
-  const currConfig = props.currConfig;
+  const playersConfig = props.playersConfig;
 
   // Only render if name is not null otherwise render "Empty"
-  if (currConfig && currConfig[courtId] && currConfig[courtId][slotId]) {
+  if (playersConfig && playersConfig[courtId] && playersConfig[courtId][slotId]) {
     return (
-      <ListGroup.Item className="list-group-item" disabled>{currConfig[courtId][slotId]}</ListGroup.Item>
+      <ListGroup.Item className="list-group-item" disabled>{playersConfig[courtId][slotId]}</ListGroup.Item>
     );
   } else {
     return (
       <ListGroup.Item className="list-group-item" disabled>Empty</ListGroup.Item>
     );
   }
-}
-
-function ShowAvailablePlayerList(props) {
-  const playerList = props.playerList;
-
-  
 }
 
 function SetSessionsListener(setSessionList, setLoggedIn) {

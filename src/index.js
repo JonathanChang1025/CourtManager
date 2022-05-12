@@ -16,7 +16,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Router>
     <Routes>
-      <Route path="/" element={<Home />}/>
+      <Route path="/" element={<Home/>}/>
       <Route path="/session" element={<Session/>}/>
       <Route path="/checkin" element={<CheckIn/>}/>
       <Route path="/qrscan" element={<QRScan/>}/>
