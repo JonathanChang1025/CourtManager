@@ -99,31 +99,33 @@ function Session() {
                         {[...Array(numOfCourts)].map((x, court_id) =>
                           <Droppable droppableId={court_id.toString()}>
                             {(provided) => (
-                              <ul className="list-group flex-fill m-2" {...provided.droppableProps} ref={provided.innerRef}>
-                                <li className="list-group-item list-group-item-primary">Court {court_id+1}</li>
-                                {
-                                  playerList.map((player, index) => {
-                                    if (player.next_court === court_id) {
-                                      var indexWithinContext = getIndexWithinContext(index, court_id);
-                                      return (
-                                        <Draggable key={player.uuid} draggableId={player.uuid} index={indexWithinContext}>
-                                          {(provided) => (
-                                            <li
-                                              {...provided.draggableProps}
-                                              {...provided.dragHandleProps}
-                                              ref={provided.innerRef}
-                                              className="list-group-item list-group-item-light"
-                                            >
-                                              {player.name}
-                                            </li>
-                                          )}
-                                        </Draggable>
-                                      );
-                                    }
-                                  })
-                                }
-                                {provided.placeholder}
-                              </ul>
+                              <div className="col p-0">
+                                <ul className="list-group flex-fill m-2" {...provided.droppableProps} ref={provided.innerRef}>
+                                  <li className="list-group-item list-group-item-primary">Court {court_id+1}</li>
+                                  {
+                                    playerList.map((player, index) => {
+                                      if (player.next_court === court_id) {
+                                        var indexWithinContext = getIndexWithinContext(index, court_id);
+                                        return (
+                                          <Draggable key={player.uuid} draggableId={player.uuid} index={indexWithinContext}>
+                                            {(provided) => (
+                                              <li
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                ref={provided.innerRef}
+                                                className="list-group-item list-group-item-light"
+                                              >
+                                                {player.name}
+                                              </li>
+                                            )}
+                                          </Draggable>
+                                        );
+                                      }
+                                    })
+                                  }
+                                  {provided.placeholder}
+                                </ul>
+                              </div>
                             )}
                           </Droppable>
                         )}
