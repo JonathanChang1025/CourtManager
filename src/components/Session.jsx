@@ -29,25 +29,29 @@ function Session() {
     setLoggedIn(false);
   }
 
+  // All players are stored in a single array: playerList
+  // Each context (idle players, court 1, court 2, ...) are denoted by player.next_court = -1, 0, 1, ... respectively
+  // Each list is rendered by loading only those players in that context.
+  // The result index returns the index the player is in WITHIN the context of each individual list (withinContext)
+  // In order to reorder them, we move them around in the master array: playerList, which means we need to know the
+  //   index from playerList (withinGlobal)
   function handleOnDragEnd(result) {
     console.log(result);
+    
+    console.log(playerList);
     if (!result.destination) return;
-
     const items = Array.from(playerList);
+    var globalSourceIndex = getIndexWithinGlobal(result.source.index, result.source.droppableId);
 
     if (result.source.droppableId === result.destination.droppableId) {
-      var globalSourceIndex = getIndexWithinGlobal(result.source.index, result.source.droppableId);
       const [reorderedItem] = items.splice(globalSourceIndex, 1);
       var globalDestinationIndex = getIndexWithinGlobal(result.destination.index, result.destination.droppableId);
       items.splice(globalDestinationIndex, 0, reorderedItem);
-
-      console.log("globalSourceIndex: " + globalSourceIndex);
-      console.log("globalDestinationIndex: " + globalDestinationIndex);
-
+  
       setPlayerList(items);
-      console.log(playerList);
     } else {
-      console.log("DIFFENT CONTEXT@@");
+      items[globalSourceIndex].next_court = Number(result.destination.droppableId);
+      setPlayerList(items);
     }
   }
 
@@ -98,9 +102,16 @@ function Session() {
                       <div className="row flex-grow">
                         {[...Array(numOfCourts)].map((x, court_id) =>
                           <Droppable droppableId={court_id.toString()}>
-                            {(provided) => (
+                            {(provided, snapshot) => (
                               <div className="col p-0">
-                                <ul className="list-group flex-fill m-2" {...provided.droppableProps} ref={provided.innerRef}>
+                                <ul className="list-group flex-fill m-2"
+                                  {...provided.droppableProps}
+                                  ref={provided.innerRef}
+                                  style={{
+                                    //background: snapshot.isDraggingOver ? "lightblue" : null,
+                                    minHeight: 245
+                                  }}  
+                                >
                                   <li className="list-group-item list-group-item-primary">Court {court_id+1}</li>
                                   {
                                     playerList.map((player, index) => {
@@ -141,8 +152,15 @@ function Session() {
                     <div className="col">
                       <div className="row flex-grow">
                         <Droppable droppableId="-1">
-                          {(provided) => (
-                            <ul className="list-group flex-fill m-2" {...provided.droppableProps} ref={provided.innerRef}>
+                          {(provided, snapshot) => (
+                            <ul className="list-group flex-fill m-2"
+                              {...provided.droppableProps}
+                              ref={provided.innerRef}
+                              style={{
+                                //background: snapshot.isDraggingOver ? "lightblue" : null,
+                                minHeight: 500
+                              }}
+                            >
                               {
                                 playerList.map((player, index) =>
                                 {
