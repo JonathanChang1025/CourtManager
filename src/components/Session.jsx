@@ -12,19 +12,12 @@ var numOfCourts = 3;
 function Session() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [sessionList, setSessionList] = useState([]);
-  const [playersPlaying, setPlayersPlaying] = useState([[]]);
-  const [playersInQueue, setPlayersInQueue] = useState([[]]);
   const [playerList, setPlayerList] = useState([]);
+
 
   useEffect(() => {
     SetSessionsListener(setSessionList, setLoggedIn);
     SetPlayersListener(setPlayerList);
-
-    // setCurrConfig([
-    //                 ["Jonathan", "Jessie", "Ranran", "Ruru"],
-    //                 ["Dudu", "Sully", "Pooh", "mPooh"],
-    //                 [, "Conrad", , "Beary"]
-    //               ]);
 	}, []);
 
   const Login = () => {
@@ -37,12 +30,42 @@ function Session() {
   }
 
   function handleOnDragEnd(result) {
+    console.log(result);
     if (!result.destination) return;
-    const items = Array.from(playerList);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
 
-    setPlayerList(items);
+    const items = Array.from(playerList);
+
+    if (result.source.droppableId === result.destination.droppableId) {
+      var globalSourceIndex = getIndexWithinGlobal(result.source.index, result.source.droppableId);
+      const [reorderedItem] = items.splice(globalSourceIndex, 1);
+      var globalDestinationIndex = getIndexWithinGlobal(result.destination.index, result.destination.droppableId);
+      items.splice(globalDestinationIndex, 0, reorderedItem);
+
+      console.log("globalSourceIndex: " + globalSourceIndex);
+      console.log("globalDestinationIndex: " + globalDestinationIndex);
+
+      setPlayerList(items);
+      console.log(playerList);
+    } else {
+      console.log("DIFFENT CONTEXT@@");
+    }
+  }
+
+  function getIndexWithinGlobal(indexTarget, context) {
+    var indexWithinGlobal = -1;
+    for (let i = 0; i < playerList.length; i++) {
+      if (playerList[i].next_court === Number(context)) indexWithinGlobal++;
+      if (indexWithinGlobal === indexTarget) return i;
+    }
+  }
+
+  function getIndexWithinContext(indexTarget, context) {
+    var indexWithinContext = 0;
+
+    for (let i = 0; i < playerList.length; i++) {
+      if (i === indexTarget) return indexWithinContext;
+      if (playerList[i].next_court === context) indexWithinContext++;
+    }
   }
 
   return (
@@ -50,90 +73,112 @@ function Session() {
       {loggedIn ?
         <div className="container-fluid">
           <div className="row flex-grow p-2">
-            <div className="col p-0">
-              <Card className="text-center" bg="success" text="light">
-                <Card.Header>Currently Playing</Card.Header>
-                <Card.Body className="p-0">
-                  <div className="col">
-                    <div className="row flex-grow">
-                      {[...Array(numOfCourts)].map((x, i) =>
-                        <ListGroup as="ul" key={i} className="list-group flex-fill m-2">
-                          <ListGroup.Item as="li" className="list-group-item list-group-item-success">
-                            Court {i+1}
-                          </ListGroup.Item>
-                          <ShowCourtList courtId={i} slotId={0} playersConfig={playersPlaying}/>
-                          <ShowCourtList courtId={i} slotId={1} playersConfig={playersPlaying}/>
-                          <ShowCourtList courtId={i} slotId={2} playersConfig={playersPlaying}/>
-                          <ShowCourtList courtId={i} slotId={3} playersConfig={playersPlaying}/>
-                        </ListGroup>
-                      )}
+            <DragDropContext onDragEnd={handleOnDragEnd}>
+              <div className="col p-0">
+                <Card className="text-center" bg="success" text="light">
+                  <Card.Header>Currently Playing</Card.Header>
+                  <Card.Body className="p-0">
+                    <div className="col">
+                      <div className="row flex-grow">
+                        {[...Array(numOfCourts)].map((x, i) =>
+                          <ul className="list-group flex-fill m-2">
+                            <li className="list-group-item list-group-item-success">Court {i+1}</li>
+                          </ul>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Card.Body>
-              </Card>
-              <div className="w-100"></div>
-              <button type="button" className="btn btn-warning btn-block my-2">⬆ start next game ⬆</button>
-              <Card className="text-center" bg="primary" text="light">
-                <Card.Header>In Queue</Card.Header>
-                <Card.Body className="p-0">
-                  <div className="col">
-                    <div className="row flex-grow">
-                      {[...Array(numOfCourts)].map((x, i) =>
-                        <ListGroup as="ul" key={i} className="list-group flex-fill m-2">
-                          <ListGroup.Item as="li" className="list-group-item list-group-item-primary">Court {i+1}</ListGroup.Item>
-                          <ShowCourtList courtId={i} slotId={0} playersConfig={playersInQueue}/>
-                          <ShowCourtList courtId={i} slotId={1} playersConfig={playersInQueue}/>
-                          <ShowCourtList courtId={i} slotId={2} playersConfig={playersInQueue}/>
-                          <ShowCourtList courtId={i} slotId={3} playersConfig={playersInQueue}/>
-                        </ListGroup>
-                      )}
+                  </Card.Body>
+                </Card>
+                <div className="w-100"></div>
+                <button type="button" className="btn btn-warning btn-block my-2">⬆ start next game ⬆</button>
+                <Card className="text-center" bg="primary" text="light">
+                  <Card.Header>In Queue</Card.Header>
+                  <Card.Body className="p-0">
+                    <div className="col">
+                      <div className="row flex-grow">
+                        {[...Array(numOfCourts)].map((x, court_id) =>
+                          <Droppable droppableId={court_id.toString()}>
+                            {(provided) => (
+                              <ul className="list-group flex-fill m-2" {...provided.droppableProps} ref={provided.innerRef}>
+                                <li className="list-group-item list-group-item-primary">Court {court_id+1}</li>
+                                {
+                                  playerList.map((player, index) => {
+                                    if (player.next_court === court_id) {
+                                      var indexWithinContext = getIndexWithinContext(index, court_id);
+                                      return (
+                                        <Draggable key={player.uuid} draggableId={player.uuid} index={indexWithinContext}>
+                                          {(provided) => (
+                                            <li
+                                              {...provided.draggableProps}
+                                              {...provided.dragHandleProps}
+                                              ref={provided.innerRef}
+                                              className="list-group-item list-group-item-light"
+                                            >
+                                              {player.name}
+                                            </li>
+                                          )}
+                                        </Draggable>
+                                      );
+                                    }
+                                  })
+                                }
+                                {provided.placeholder}
+                              </ul>
+                            )}
+                          </Droppable>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Card.Body>
-              </Card>
-            </div>
-            <div className="col-3 p-0">
-              <Card className="text-center ml-2 h-100" bg="dark" text="light">
-                <Card.Header>Available Players</Card.Header>
-                <Card.Body className="p-0">
-                  <div className="col">
-                    <div className="row flex-grow">
-                      <DragDropContext onDragEnd={handleOnDragEnd}>
-                        <Droppable droppableId="players">
+                  </Card.Body>
+                </Card>
+              </div>
+              <div className="col-3 p-0">
+                <Card className="text-center ml-2 h-100" bg="dark" text="light">
+                  <Card.Header>Available Players</Card.Header>
+                  <Card.Body className="p-0">
+                    <div className="col">
+                      <div className="row flex-grow">
+                        <Droppable droppableId="-1">
                           {(provided) => (
                             <ul className="list-group flex-fill m-2" {...provided.droppableProps} ref={provided.innerRef}>
                               {
                                 playerList.map((player, index) =>
-                                  <Draggable key={player.uuid} draggableId={player.uuid} index={index}>
-                                    {(provided) => (
-                                      <li
-                                        {...provided.draggableProps}
-                                        {...provided.dragHandleProps}
-                                        ref={provided.innerRef}
-                                        as="li"
-                                        className="list-group-item
-                                          d-flex
-                                          justify-content-between
-                                          align-items-center
-                                          list-group-item-light"
-                                      >
-                                        {player.name}
-                                        <span className="badge badge-primary badge-pill">{player.total_games}</span>
-                                      </li>
-                                    )}
-                                  </Draggable>
-                                )
+                                {
+                                  // Only display available players if they don't have next court set for them
+                                  if (player.next_court === -1) {
+                                    var indexWithinContext = getIndexWithinContext(index, -1);
+                                    return (
+                                      <Draggable key={player.uuid} draggableId={player.uuid} index={indexWithinContext}>
+                                        {(provided) => (
+                                          <li
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            ref={provided.innerRef}
+                                            className="list-group-item
+                                              d-flex
+                                              justify-content-between
+                                              align-items-center
+                                              list-group-item-light"
+                                          >
+                                            {player.name}
+                                            <span className="badge badge-primary badge-pill">{player.total_games}</span>
+                                          </li>
+                                        )}
+                                      </Draggable>
+                                    );
+                                  }
+                                })
                               }
                               {provided.placeholder}
                             </ul>
                           )}
                         </Droppable>
-                      </DragDropContext>
+                      </div>
                     </div>
-                  </div>
-                </Card.Body>
-              </Card>
-            </div>
+                  </Card.Body>
+                </Card>
+              </div>
+            </DragDropContext>
           </div>
           <EndSession Logout={Logout}></EndSession>
         </div>:
@@ -152,23 +197,6 @@ function DeleteSession() {
 
   sessionRef.remove();
   playerRef.remove();
-}
-
-function ShowCourtList(props) {
-  const courtId = props.courtId;
-  const slotId = props.slotId;
-  const playersConfig = props.playersConfig;
-
-  // Only render if name is not null otherwise render "Empty"
-  if (playersConfig && playersConfig[courtId] && playersConfig[courtId][slotId]) {
-    return (
-      <ListGroup.Item className="list-group-item" disabled>{playersConfig[courtId][slotId]}</ListGroup.Item>
-    );
-  } else {
-    return (
-      <ListGroup.Item className="list-group-item" disabled>Empty</ListGroup.Item>
-    );
-  }
 }
 
 function SetSessionsListener(setSessionList, setLoggedIn) {
