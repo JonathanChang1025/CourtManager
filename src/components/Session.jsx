@@ -37,8 +37,7 @@ function Session() {
   //   index from playerList (withinGlobal)
   function handleOnDragEnd(result) {
     console.log(result);
-    
-    console.log(playerList);
+
     if (!result.destination) return;
     const items = Array.from(playerList);
     var globalSourceIndex = getIndexWithinGlobal(result.source.index, result.source.droppableId);
@@ -53,6 +52,8 @@ function Session() {
       items[globalSourceIndex].next_court = Number(result.destination.droppableId);
       setPlayerList(items);
     }
+
+    UpdatePlayerData(playerList);
   }
 
   function getIndexWithinGlobal(indexTarget, context) {
@@ -74,7 +75,7 @@ function Session() {
 
   return (
     <>
-      {loggedIn ?
+      {true ? //loggedIn ?
         <div className="container-fluid">
           <div className="row flex-grow p-2">
             <DragDropContext onDragEnd={handleOnDragEnd}>
@@ -247,6 +248,13 @@ function SetPlayersListener(setPlayerList) {
     }
     setPlayerList(playerList);
   });
+}
+
+function UpdatePlayerData(playerFullData) {
+  const playerRef = firebase.database().ref('Players');
+  const {uuid, ...playerData} = playerFullData;
+  console.log(playerData);
+  playerRef.child(uuid).set(playerData);
 }
 
 export default Session;
