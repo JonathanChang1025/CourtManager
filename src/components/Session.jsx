@@ -45,13 +45,20 @@ function Session() {
       const [reorderedItem] = items.splice(globalSourceIndex, 1);
       var globalDestinationIndex = getIndexWithinGlobal(result.destination.index, result.destination.droppableId);
       items.splice(globalDestinationIndex, 0, reorderedItem);
-  
+
+      // Reconfigure all the position value based on index of array
+      for (var i = 0; i < items.length; i++) {
+        items[i].position = i;
+        UpdatePlayerData(items[i], "position");
+      }
+
       setPlayerList(items);
     } else {
       items[globalSourceIndex].next_court = Number(result.destination.droppableId);
+
       setPlayerList(items);
+      UpdatePlayerData(playerList[globalSourceIndex], "next_court");
     }
-    UpdatePlayerData(playerList[globalSourceIndex], "next_court");
   }
 
   function getIndexWithinGlobal(indexTarget, context) {
@@ -69,6 +76,10 @@ function Session() {
       if (i === indexTarget) return indexWithinContext;
       if (playerList[i].next_court === context) indexWithinContext++;
     }
+  }
+
+  const Console = () => {
+    console.log(playerList);
   }
 
   return (
@@ -93,7 +104,7 @@ function Session() {
                   </Card.Body>
                 </Card>
                 <div className="w-100"></div>
-                <button type="button" className="btn btn-warning btn-block my-2">⬆ start next game ⬆</button>
+                <button type="button" className="btn btn-warning btn-block my-2" onClick={Console}>⬆ start next game ⬆</button>
                 <Card className="text-center" bg="primary" text="light">
                   <Card.Header>In Queue</Card.Header>
                   <Card.Body className="p-0">
@@ -236,14 +247,13 @@ function SetSessionsListener(setSessionList, setLoggedIn) {
 }
 
 function SetPlayersListener(setPlayerList) {
-  const sessionRef = firebase.database().ref('Players')
+  const playerRef = firebase.database().ref('Players')
 
-  sessionRef.on('value', (snapshot) => {
-    const players = snapshot.val();
+  playerRef.orderByChild("position").on("value", (snapshot) => {
     const playerList = [];
-    for (let uuid in players) {
-      playerList.push({uuid, ...players[uuid]});
-    }
+    snapshot.forEach(function(player) {
+      playerList.push({uuid: player.key, ...player.val()});
+    });
     setPlayerList(playerList);
   });
 }

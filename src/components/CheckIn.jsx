@@ -40,7 +40,13 @@ function CheckIn() {
   }
 
   const Console = () => {
-    console.log(playerData);
+    const playerRef = firebase.database().ref('Players')
+
+    playerRef.orderByChild("position").once("value", (snapshot) => {
+      snapshot.forEach(function(player) {
+        console.log(player.key);
+      });
+    });
   }
 
   return (
@@ -132,7 +138,7 @@ function InstantiatePlayerData(setPlayerData, userFullDetails, sessionUUID) {
 
     // First time logging in
     if (fullPlayerData == null) {
-      CreatePlayer(userFullDetails, sessionUUID);
+      CreatePlayer(userFullDetails, sessionUUID, snapshot.numChildren());
 
       // Still need to fetch again from firebase because we want to get the generated player UUID
       playerRef.once('value', (snapshot) => {
@@ -151,10 +157,11 @@ function InstantiatePlayerData(setPlayerData, userFullDetails, sessionUUID) {
   });
 }
 
-function CreatePlayer(playerFullDetails, sessionUUID) {
+function CreatePlayer(playerFullDetails, sessionUUID, playerCount) {
   const playerRef = firebase.database().ref('Players')
   const {uuid, ...playerDetails} = playerFullDetails;
 
+  console.log(playerCount);
   playerRef.push({
     user_uuid : uuid,
     created_at : Date(),
@@ -163,7 +170,7 @@ function CreatePlayer(playerFullDetails, sessionUUID) {
     total_games : 0,
     current_court : -1,
     next_court : -1,
-    //login_order : loginOrder,
+    position : playerCount,
     ...playerDetails
   });
 }
