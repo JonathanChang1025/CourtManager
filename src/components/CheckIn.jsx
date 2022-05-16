@@ -52,6 +52,8 @@ function CheckIn() {
             {playerData != null ?
               <div className="welcome">
                   <h2>Welcome, <span>{playerData.name}{playerData.uuid}</span></h2>
+                  <p>You are currently on court: {playerData.current_court}</p>
+                  <p>Next you will be on court: {playerData.next_court}</p>
                   <button onClick={Logout}>Check out</button>
                   <button onClick={Console}>Console.log</button>
                   <button onClick={CreatePlayerButton}>Create New Player</button>

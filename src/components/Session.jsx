@@ -36,12 +36,11 @@ function Session() {
   // In order to reorder them, we move them around in the master array: playerList, which means we need to know the
   //   index from playerList (withinGlobal)
   function handleOnDragEnd(result) {
-    console.log(result);
-
     if (!result.destination) return;
     const items = Array.from(playerList);
     var globalSourceIndex = getIndexWithinGlobal(result.source.index, result.source.droppableId);
 
+    // If list is just being re-ordered in the same context droppable area, otherwise go to else
     if (result.source.droppableId === result.destination.droppableId) {
       const [reorderedItem] = items.splice(globalSourceIndex, 1);
       var globalDestinationIndex = getIndexWithinGlobal(result.destination.index, result.destination.droppableId);
@@ -52,8 +51,7 @@ function Session() {
       items[globalSourceIndex].next_court = Number(result.destination.droppableId);
       setPlayerList(items);
     }
-
-    UpdatePlayerData(playerList);
+    UpdatePlayerData(playerList[globalSourceIndex], "next_court");
   }
 
   function getIndexWithinGlobal(indexTarget, context) {
@@ -250,11 +248,12 @@ function SetPlayersListener(setPlayerList) {
   });
 }
 
-function UpdatePlayerData(playerFullData) {
+function UpdatePlayerData(playerFullData, field) {
   const playerRef = firebase.database().ref('Players');
-  const {uuid, ...playerData} = playerFullData;
-  console.log(playerData);
-  playerRef.child(uuid).set(playerData);
+
+  playerRef.child(playerFullData["uuid"]).child(field).set(playerFullData[field]);
+  console.log("\n\n\n");
+  console.log(playerFullData);
 }
 
 export default Session;
