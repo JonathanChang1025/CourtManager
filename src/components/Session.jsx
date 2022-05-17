@@ -75,16 +75,11 @@ function Session() {
               console.log("my global index is: "+ globalSourceIndex);
 
               const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
-              if (globalSourceIndex > i) {
-                console.log("putting myself at (i+1) " + (i+1));
-                tempPlayerList.splice((i+1), 0, movingPlayer);
-                tempPlayerList[i+1].next_court = Number(result.destination.droppableId);
-              } else {
-                console.log("putting myself at i " + i);
-                tempPlayerList.splice(i, 0, movingPlayer);
-                tempPlayerList[i].next_court = Number(result.destination.droppableId);
-                UpdatePlayerData(tempPlayerList[i], "next_court");
-              }
+              if (globalSourceIndex > i) i+=1;
+
+              tempPlayerList.splice(i, 0, movingPlayer);
+              tempPlayerList[i].next_court = Number(result.destination.droppableId);
+              UpdatePlayerData(tempPlayerList[i], "next_court");
               break;
             }
           }
