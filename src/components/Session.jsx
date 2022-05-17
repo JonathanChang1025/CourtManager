@@ -36,29 +36,67 @@ function Session() {
   // In order to reorder them, we move them around in the master array: playerList, which means we need to know the
   //   index from playerList (withinGlobal)
   function handleOnDragEnd(result) {
+    console.log(result);
     if (!result.destination) return;
-    const items = Array.from(playerList);
+
+    const tempPlayerList = Array.from(playerList);
     var globalSourceIndex = getIndexWithinGlobal(result.source.index, result.source.droppableId);
+    var globalDestinationIndex = getIndexWithinGlobal(result.destination.index, result.destination.droppableId);
 
     // If list is just being re-ordered in the same context droppable area, otherwise go to else
     if (result.source.droppableId === result.destination.droppableId) {
-      const [reorderedItem] = items.splice(globalSourceIndex, 1);
-      var globalDestinationIndex = getIndexWithinGlobal(result.destination.index, result.destination.droppableId);
-      items.splice(globalDestinationIndex, 0, reorderedItem);
+      const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
+      tempPlayerList.splice(globalDestinationIndex, 0, movingPlayer);
 
       // Reconfigure all the position value based on index of array
-      for (var i = 0; i < items.length; i++) {
-        items[i].position = i;
-        UpdatePlayerData(items[i], "position");
+      for (var i = 0; i < tempPlayerList.length; i++) {
+        tempPlayerList[i].position = i;
+        UpdatePlayerData(tempPlayerList[i], "position");
       }
 
-      setPlayerList(items);
+      setPlayerList(tempPlayerList);
     } else {
-      items[globalSourceIndex].next_court = Number(result.destination.droppableId);
+      const numberOfPriorPlayersOnThisCourt = result.destination.index;
+      const destinationCourtId = Number(result.destination.droppableId);
+      var numberOfPriorPlayersCounter = 0;
 
-      setPlayerList(items);
-      UpdatePlayerData(playerList[globalSourceIndex], "next_court");
+      if (numberOfPriorPlayersOnThisCourt === 0) {
+        tempPlayerList[globalSourceIndex].next_court = Number(result.destination.droppableId);
+        UpdatePlayerData(tempPlayerList[globalSourceIndex], "next_court");
+
+        const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
+        tempPlayerList.splice(0, 0, movingPlayer);
+      } else {
+        for (var i = 0; i < tempPlayerList.length; i++) {
+          if (tempPlayerList[i].next_court === destinationCourtId) {
+            numberOfPriorPlayersCounter++;
+            if (numberOfPriorPlayersOnThisCourt === numberOfPriorPlayersCounter) {
+              console.log(tempPlayerList[i].name + " is above me. their global index is: " + i);
+              console.log("my global index is: "+ globalSourceIndex);
+
+              const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
+              if (globalSourceIndex > i) {
+                console.log("putting myself at (i+1) " + (i+1));
+                tempPlayerList.splice((i+1), 0, movingPlayer);
+                tempPlayerList[i+1].next_court = Number(result.destination.droppableId);
+              } else {
+                console.log("putting myself at i " + i);
+                tempPlayerList.splice(i, 0, movingPlayer);
+                tempPlayerList[i].next_court = Number(result.destination.droppableId);
+                UpdatePlayerData(tempPlayerList[i], "next_court");
+              }
+              break;
+            }
+          }
+        }
+      }
     }
+    // Reconfigure all the position value based on index of array
+    for (var i = 0; i < tempPlayerList.length; i++) {
+      tempPlayerList[i].position = i;
+      UpdatePlayerData(tempPlayerList[i], "position");
+    }
+    setPlayerList(tempPlayerList);
   }
 
   function getIndexWithinGlobal(indexTarget, context) {
@@ -114,6 +152,7 @@ function Session() {
                           <Droppable droppableId={court_id.toString()}>
                             {(provided, snapshot) => (
                               <div className="col p-0">
+                                <p>Court {court_id+1}</p>
                                 <ul className="list-group flex-fill m-2"
                                   {...provided.droppableProps}
                                   ref={provided.innerRef}
@@ -122,7 +161,6 @@ function Session() {
                                     minHeight: 245
                                   }}  
                                 >
-                                  <li className="list-group-item list-group-item-primary">Court {court_id+1}</li>
                                   {
                                     playerList.map((player, index) => {
                                       if (player.next_court === court_id) {
@@ -134,9 +172,14 @@ function Session() {
                                                 {...provided.draggableProps}
                                                 {...provided.dragHandleProps}
                                                 ref={provided.innerRef}
-                                                className="list-group-item list-group-item-light"
+                                                className="list-group-item
+                                                d-flex
+                                                justify-content-between
+                                                align-items-center
+                                                list-group-item-light"
                                               >
                                                 {player.name}
+                                                <span className="badge badge-primary badge-pill">{player.total_games}</span>
                                               </li>
                                             )}
                                           </Draggable>
@@ -262,8 +305,6 @@ function UpdatePlayerData(playerFullData, field) {
   const playerRef = firebase.database().ref('Players');
 
   playerRef.child(playerFullData["uuid"]).child(field).set(playerFullData[field]);
-  console.log("\n\n\n");
-  console.log(playerFullData);
 }
 
 export default Session;
