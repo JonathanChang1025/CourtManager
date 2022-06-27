@@ -3,6 +3,7 @@ import LoginForm from "./LoginForm";
 import { resources } from '../resource'
 import firebase from "../services/firebase";
 import { Navigation } from "./";
+import { v4 as uuidv4 } from 'uuid';
 
 function CheckIn() {
   const [sessionActive, setSessionActive] = useState(false);
@@ -22,14 +23,20 @@ function CheckIn() {
   }
 
   const CreatePlayerButton = () => {
+  const playerRef = firebase.database().ref('Players')
+
+  playerRef.once('value', (snapshot) => {
     CreatePlayer(
       {
-        uuid: "teStUUid",
+        uuid: uuidv4(),
         name: "Test Name",
         phone: "1010101010"
       },
-      sessionUUID
+      sessionUUID,
+      snapshot.numChildren()
     );
+  });
+    
   }
 
   const Logout = () => {

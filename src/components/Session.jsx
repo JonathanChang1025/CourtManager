@@ -7,6 +7,9 @@ import EndSession from "./EndSession";
 import firebase from "../services/firebase";
 import { Navigation } from "./";
 
+// The way this class works is by adding a listener on the players; the local playerList will be updated as the realtime database is changed
+// When modifying player data, just call UpdatePlayerData() to update it onto the cloud so that all instances will reflect the change
+
 var numOfCourts = 3;
 
 function Session() {
@@ -53,8 +56,6 @@ function Session() {
         tempPlayerList[i].position = i;
         UpdatePlayerData(tempPlayerList[i], "position");
       }
-
-      setPlayerList(tempPlayerList);
     } else {
       const numberOfPriorPlayersOnThisCourt = result.destination.index;
       const destinationCourtId = Number(result.destination.droppableId);
@@ -91,7 +92,6 @@ function Session() {
       tempPlayerList[i].position = i;
       UpdatePlayerData(tempPlayerList[i], "position");
     }
-    setPlayerList(tempPlayerList);
   }
 
   function getIndexWithinGlobal(indexTarget, context) {
@@ -111,8 +111,24 @@ function Session() {
     }
   }
 
-  const Console = () => {
-    console.log(playerList);
+  const startNextGame = () => {
+    playerList.forEach(function (player) {
+      // Increase game count for those who just got off
+      if (player.current_court != -1) {
+        player.total_games += 1;
+      }
+      // Clear everyone off
+      player.current_court = -1;
+      // Set those who are next to play onto court and clear them off of queue
+      if (player.next_court != -1) {
+        player.current_court = player.next_court;
+        player.next_court = -1;
+      }
+
+      UpdatePlayerData(player, "current_court");
+      UpdatePlayerData(player, "next_court");
+      UpdatePlayerData(player, "total_games");
+    });
   }
 
   return (
@@ -127,17 +143,30 @@ function Session() {
                   <Card.Body className="p-0">
                     <div className="col">
                       <div className="row flex-grow">
-                        {[...Array(numOfCourts)].map((x, i) =>
-                          <ul className="list-group flex-fill m-2">
-                            <li className="list-group-item list-group-item-success">Court {i+1}</li>
-                          </ul>
+                        {[...Array(numOfCourts)].map((x, court_id) =>
+                          <div className="col p-0">
+                            <p>Court {court_id+1}</p>
+                            <ul className="list-group flex-fill m-2"
+                              style={{minHeight: 200}}
+                            >
+                              {
+                                playerList.map(function(player){
+                                  if (player.current_court == court_id) {
+                                    return (
+                                      <li className="list-group-item list-group-item-success">{player.name}</li>
+                                    );
+                                  }
+                                })
+                              }
+                            </ul>
+                          </div>
                         )}
                       </div>
                     </div>
                   </Card.Body>
                 </Card>
                 <div className="w-100"></div>
-                <button type="button" className="btn btn-warning btn-block my-2" onClick={Console}>⬆ start next game ⬆</button>
+                <button type="button" className="btn btn-warning btn-block my-2" onClick={startNextGame}>⬆ start next game ⬆</button>
                 <Card className="text-center" bg="primary" text="light">
                   <Card.Header>In Queue</Card.Header>
                   <Card.Body className="p-0">
@@ -151,10 +180,7 @@ function Session() {
                                 <ul className="list-group flex-fill m-2"
                                   {...provided.droppableProps}
                                   ref={provided.innerRef}
-                                  style={{
-                                    //background: snapshot.isDraggingOver ? "lightblue" : null,
-                                    minHeight: 245
-                                  }}  
+                                  style={{minHeight: 200}}  
                                 >
                                   {
                                     playerList.map((player, index) => {
