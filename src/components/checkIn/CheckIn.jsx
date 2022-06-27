@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import LoginForm from "./LoginForm";
-import { resources } from '../resource'
-import firebase from "../services/firebase";
-import { Navigation } from "./";
+import { RESOURCES } from '../../resource'
+import firebase from "../../services/firebase";
+import { Navigation } from "..";
 import { v4 as uuidv4 } from 'uuid';
 
 function CheckIn() {
@@ -76,8 +76,8 @@ function CheckIn() {
           </> :
           <div className="m-4 p-5 bg-secondary text-white rounded">
             <div className="container">
-              <h1 className="display-4">{resources.CHECKIN.INACTIVE.TITLE}</h1>
-              <p className="lead">{resources.CHECKIN.INACTIVE.MESSAGE}</p>
+              <h1 className="display-4">{RESOURCES.CHECKIN.INACTIVE.TITLE}</h1>
+              <p className="lead">{RESOURCES.CHECKIN.INACTIVE.MESSAGE}</p>
             </div>
           </div>
         }

@@ -1,7 +1,6 @@
-import React from "react";
 import QRCode from "react-qr-code";
-import { resources } from '../resource'
-import { Navigation } from "./";
+import { RESOURCES } from '../../resource'
+import { Navigation } from "../";
 
 function QRScan() {
   return (
@@ -15,17 +14,17 @@ function QRScan() {
               <div className="card-body">
                 <div className="row justify-content-center">
                     <h4 className="card-title">
-                      {resources.QR.TITLE}
+                      {RESOURCES.QR.TITLE}
                     </h4>
                     <h6 className="card-subtitle mb-2 text-muted">
-                      {resources.QR.SUBTITLE}
+                      {RESOURCES.QR.SUBTITLE}
                     </h6>
                     <h4 className="card-text">
-                      {resources.QR.URL}
+                      {RESOURCES.QR.URL}
                     </h4>
                     <br/><br/><br/>
                     <QRCode
-                      value={resources.QR.LINK}
+                      value={RESOURCES.QR.LINK}
                       size={256}
                     />
                   </div>

@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Form } from 'react-bootstrap';
-import firebase from "../services/firebase";
-import { resources } from '../resource';
+import firebase from "../../services/firebase";
+import { RESOURCES } from '../../resource';
 
-function SessionLogin({ Login, sessionList }) {
+function SessionLogin({ login, sessionList }) {
   const [passwordInput, setPasswordInput] = useState("");
 	const [showPasswordWrongAlert, setShowPasswordWrongAlert] = useState(false);
 
@@ -12,7 +12,7 @@ function SessionLogin({ Login, sessionList }) {
 
     if (passwordInput === process.env.REACT_APP_ADMIN_PASSWORD) {
       setShowPasswordWrongAlert(false);
-      Login();
+      login();
     } else {
       setShowPasswordWrongAlert(true);
     }
@@ -23,8 +23,8 @@ function SessionLogin({ Login, sessionList }) {
 
     if (passwordInput === process.env.REACT_APP_ADMIN_PASSWORD) {
       setShowPasswordWrongAlert(false);
-      CreateSession();
-      Login();
+      createSession();
+      login();
     } else {
       setShowPasswordWrongAlert(true);
     }
@@ -38,7 +38,7 @@ function SessionLogin({ Login, sessionList }) {
             <div className="m-3">
               {showPasswordWrongAlert ?
                 <div className="alert alert-danger" role="alert">
-                  {resources.SESSION.LOGIN.ERROR_NOT_FOUND}
+                  {RESOURCES.SESSION.LOGIN.ERROR_NOT_FOUND}
                 </div> :
                 null
               }
@@ -53,25 +53,25 @@ function SessionLogin({ Login, sessionList }) {
               {sessionList.length !== 0 ?
                 <div>
                   <button type="button" className="btn btn-primary btn-block" onClick={accessSessionHandler}>
-                  {resources.SESSION.LOGIN.ENTER_SESSION}
+                  {RESOURCES.SESSION.LOGIN.ENTER_SESSION}
                   </button>
                   <br/>
                   <h6>
-                    {resources.SESSION.LOGIN.SESSION_TEXT}&nbsp;
+                    {RESOURCES.SESSION.LOGIN.SESSION_TEXT}&nbsp;
                     <span className="badge bg-success text-light">
-                      {resources.SESSION.LOGIN.SESSION_ACTIVE}
+                      {RESOURCES.SESSION.LOGIN.SESSION_ACTIVE}
                     </span>
                   </h6>
                 </div> :
                 <div>
                   <button type="button" className="btn btn-success btn-block" onClick={createAndAccessSessionHandler}>
-                    {resources.SESSION.LOGIN.CREATE_SESSION}
+                    {RESOURCES.SESSION.LOGIN.CREATE_SESSION}
                   </button>
                   <br/>
                   <h6>
-                    {resources.SESSION.LOGIN.SESSION_TEXT}&nbsp;
+                    {RESOURCES.SESSION.LOGIN.SESSION_TEXT}&nbsp;
                     <span className="badge bg-secondary text-light">
-                      {resources.SESSION.LOGIN.SESSION_INACTIVE}
+                      {RESOURCES.SESSION.LOGIN.SESSION_INACTIVE}
                     </span>
                   </h6>
                 </div>
@@ -81,11 +81,10 @@ function SessionLogin({ Login, sessionList }) {
         </div>
       </div>
     </div>
-
 	)
 }
 
-function CreateSession() {
+function createSession() {
 	const sessionRef = firebase.database().ref('Sessions');
   sessionRef.push({
     created_at : Date(),

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import firebase from "../services/firebase";
-import { resources } from '../resource';
+import firebase from "../../services/firebase";
+import { RESOURCES } from '../../resource';
 
 function LoginForm(props) {
 	const [phoneInput, setPhoneInput] = useState("");
@@ -23,7 +23,7 @@ function LoginForm(props) {
 
 	const memberSubmitHandler = e => {
 		e.preventDefault();
-		var member = GetMemberData(memberList, phoneInput);
+		var member = getMemberData(memberList, phoneInput);
 		if (member == null) {
 			setShowMemberLoginAlert(true);
 		} else {
@@ -34,6 +34,16 @@ function LoginForm(props) {
 
 	const closeMemberLoginAlert = () => {
 		setShowMemberLoginAlert(false);
+	}
+
+	function getMemberData(memberList, phoneInput) {
+		for (let member of memberList) {
+			var memberPhone = member.phone;
+			if (phoneInput === memberPhone) {
+				return member;
+			}
+		}
+		return null;
 	}
 
 	return (
@@ -47,19 +57,19 @@ function LoginForm(props) {
 									<button type="button" className="close" onClick={closeMemberLoginAlert}>
 										<span aria-hidden="true">&times;</span>
 									</button>
-									{resources.CHECKIN.MEMBER.ERROR_NOT_FOUND}
+									{RESOURCES.CHECKIN.MEMBER.ERROR_NOT_FOUND}
 								</div> :
 								null
 							}
 							<div className="card-body">
 								<h5 className="card-title">
-									{resources.CHECKIN.MEMBER.TITLE}
+									{RESOURCES.CHECKIN.MEMBER.TITLE}
 								</h5>
 								<h6 className="card-subtitle mb-2 text-muted">
-									{resources.CHECKIN.MEMBER.SUBTITLE}
+									{RESOURCES.CHECKIN.MEMBER.SUBTITLE}
 								</h6>
 								<p className="card-text">
-									{resources.CHECKIN.MEMBER.MESSAGE}
+									{RESOURCES.CHECKIN.MEMBER.MESSAGE}
 								</p>
 							</div>
 							<Form>
@@ -71,7 +81,7 @@ function LoginForm(props) {
 										/>
 								</Form.Group>
 								<Button variant="primary" type="submit" onClick={memberSubmitHandler}>
-									{resources.CHECKIN.MEMBER.BUTTON}
+									{RESOURCES.CHECKIN.MEMBER.BUTTON}
 								</Button>
 							</Form>
 						</div>
@@ -81,13 +91,13 @@ function LoginForm(props) {
 						<div className="m-3">
 							<div className="card-body">
 								<h5 className="card-title">
-									{resources.CHECKIN.DROPIN.TITLE}
+									{RESOURCES.CHECKIN.DROPIN.TITLE}
 								</h5>
 								<h6 className="card-subtitle mb-2 text-muted">
-									{resources.CHECKIN.DROPIN.SUBTITLE}
+									{RESOURCES.CHECKIN.DROPIN.SUBTITLE}
 								</h6>
 								<p className="card-text">
-									{resources.CHECKIN.DROPIN.MESSAGE}
+									{RESOURCES.CHECKIN.DROPIN.MESSAGE}
 								</p>
 							</div>
 							<Form>
@@ -95,7 +105,7 @@ function LoginForm(props) {
 									<Form.Control type="email" placeholder="Enter full name"/>
 								</Form.Group>
 								<Button variant="secondary" type="submit" onClick={memberSubmitHandler}>
-									{resources.CHECKIN.DROPIN.BUTTON}
+									{RESOURCES.CHECKIN.DROPIN.BUTTON}
 								</Button>
 							</Form>
 						</div>
@@ -105,16 +115,6 @@ function LoginForm(props) {
 		</div>
 
 	)
-}
-
-function GetMemberData(memberList, phoneInput) {
-	for (let member of memberList) {
-		var memberPhone = member.phone;
-		if (phoneInput === memberPhone) {
-			return member;
-		}
-	}
-	return null;
 }
 
 export default LoginForm

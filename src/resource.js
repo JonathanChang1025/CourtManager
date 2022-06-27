@@ -1,4 +1,4 @@
-export const resources = {
+export const RESOURCES = {
     HOME: {
         SUMMARY : {
             TITLE : "Newlife Gospel Church Badminton Club",

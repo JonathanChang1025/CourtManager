@@ -1,7 +1,6 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
 import { BrowserView, MobileView } from 'react-device-detect';
-import logo from "../img/logo.png"
+import logo from "../../img/logo.png"
 
 function Navigation() {
   return (
