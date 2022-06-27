@@ -11,6 +11,7 @@ import { Navigation } from "./";
 // When modifying player data, just call UpdatePlayerData() to update it onto the cloud so that all instances will reflect the change
 
 var numOfCourts = 3;
+var maxPlayerPerCourt = 4;
 
 function Session() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -59,29 +60,38 @@ function Session() {
     } else {
       const numberOfPriorPlayersOnThisCourt = result.destination.index;
       const destinationCourtId = Number(result.destination.droppableId);
-      var numberOfPriorPlayersCounter = 0;
 
-      if (numberOfPriorPlayersOnThisCourt === 0) {
-        tempPlayerList[globalSourceIndex].next_court = Number(result.destination.droppableId);
-        UpdatePlayerData(tempPlayerList[globalSourceIndex], "next_court");
+      var numberOfPlayersOnThisCourt = 0;
+      playerList.forEach(function(player) {
+        if (player.next_court == destinationCourtId) {
+          numberOfPlayersOnThisCourt++;
+        }
+      })
 
-        const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
-        tempPlayerList.splice(0, 0, movingPlayer);
-      } else {
-        for (var i = 0; i < tempPlayerList.length; i++) {
-          if (tempPlayerList[i].next_court === destinationCourtId) {
-            numberOfPriorPlayersCounter++;
-            if (numberOfPriorPlayersOnThisCourt === numberOfPriorPlayersCounter) {
-              console.log(tempPlayerList[i].name + " is above me. their global index is: " + i);
-              console.log("my global index is: "+ globalSourceIndex);
+      if (numberOfPlayersOnThisCourt < maxPlayerPerCourt) {
+        var numberOfPriorPlayersCounter = 0;
+        if (numberOfPriorPlayersOnThisCourt === 0) {
+          tempPlayerList[globalSourceIndex].next_court = Number(result.destination.droppableId);
+          UpdatePlayerData(tempPlayerList[globalSourceIndex], "next_court");
 
-              const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
-              if (globalSourceIndex > i) i+=1;
+          const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
+          tempPlayerList.splice(0, 0, movingPlayer);
+        } else {
+          for (var i = 0; i < tempPlayerList.length; i++) {
+            if (tempPlayerList[i].next_court === destinationCourtId) {
+              numberOfPriorPlayersCounter++;
+              if (numberOfPriorPlayersOnThisCourt === numberOfPriorPlayersCounter) {
+                console.log(tempPlayerList[i].name + " is above me. their global index is: " + i);
+                console.log("my global index is: "+ globalSourceIndex);
 
-              tempPlayerList.splice(i, 0, movingPlayer);
-              tempPlayerList[i].next_court = Number(result.destination.droppableId);
-              UpdatePlayerData(tempPlayerList[i], "next_court");
-              break;
+                const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
+                if (globalSourceIndex > i) i+=1;
+
+                tempPlayerList.splice(i, 0, movingPlayer);
+                tempPlayerList[i].next_court = Number(result.destination.droppableId);
+                UpdatePlayerData(tempPlayerList[i], "next_court");
+                break;
+              }
             }
           }
         }
