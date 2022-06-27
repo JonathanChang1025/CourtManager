@@ -62,11 +62,13 @@ function Session() {
       const destinationCourtId = Number(result.destination.droppableId);
 
       var numberOfPlayersOnThisCourt = 0;
-      playerList.forEach(function(player) {
-        if (player.next_court == destinationCourtId) {
-          numberOfPlayersOnThisCourt++;
-        }
-      })
+        if (destinationCourtId != -1) {
+        playerList.forEach(function(player) {
+          if (player.next_court == destinationCourtId) {
+            numberOfPlayersOnThisCourt++;
+          }
+        })
+      }
 
       if (numberOfPlayersOnThisCourt < maxPlayerPerCourt) {
         var numberOfPriorPlayersCounter = 0;
@@ -210,7 +212,12 @@ function Session() {
                                                 list-group-item-light"
                                               >
                                                 {player.name}
-                                                <span className="badge badge-primary badge-pill">{player.total_games}</span>
+                                                {
+                                                  player.current_court == -1 ?
+                                                  <span className="badge badge-success badge-pill">{player.total_games}</span> :
+                                                  <span className="badge badge-warning badge-pill">{player.total_games}</span>
+                                                }
+                                                
                                               </li>
                                             )}
                                           </Draggable>
@@ -265,7 +272,11 @@ function Session() {
                                               list-group-item-light"
                                           >
                                             {player.name}
-                                            <span className="badge badge-primary badge-pill">{player.total_games}</span>
+                                            {
+                                              player.current_court == -1 ?
+                                              <span className="badge badge-success badge-pill">{player.total_games}</span> :
+                                              <span className="badge badge-warning badge-pill">{player.total_games}</span>
+                                            }
                                           </li>
                                         )}
                                       </Draggable>
