@@ -17,7 +17,7 @@ function QueueCourt(props) {
                     <ul className="list-group flex-fill m-2"
                       {...provided.droppableProps}
                       ref={provided.innerRef}
-                      style={{minHeight: 200}}  
+                      style={{minHeight: 200, maxHeight: 200}}  
                     >
                       {
                         props.playerList.map((player, index) => {

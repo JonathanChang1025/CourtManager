@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import LoginForm from "./LoginForm";
-import { RESOURCES } from '../../resource'
+import Profile from "./Profile";
+import { RESOURCES } from "../../resource";
 import firebase from "../../services/firebase";
-import { Navigation } from "..";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 function CheckIn() {
   const [sessionActive, setSessionActive] = useState(false);
@@ -11,22 +11,22 @@ function CheckIn() {
   const [playerData, setPlayerData] = useState(null);
   
   useEffect(() => {
-		SetSessionsListener(setSessionActive, setSessionUUID);
+		setSessionsListener(setSessionActive, setSessionUUID);
 	}, []);
 
   const Login = (playerType, userDetails) => {
     if (userDetails != null) {
-      InstantiatePlayerData(setPlayerData, userDetails, sessionUUID);
+      instantiatePlayerData(setPlayerData, userDetails, sessionUUID);
     } else {
       console.log("userDetails is null: Memeber does not exist in member table database");
     }
   }
 
-  const CreatePlayerButton = () => {
+  const createPlayerButton = () => {
   const playerRef = firebase.database().ref('Players')
 
   playerRef.once('value', (snapshot) => {
-    CreatePlayer(
+    createPlayer(
       {
         uuid: uuidv4(),
         name: "Test Name",
@@ -39,14 +39,14 @@ function CheckIn() {
     
   }
 
-  const Logout = () => {
+  const logout = () => {
     playerData.active = false;
-    UpdatePlayerData(playerData);
+    updatePlayerData(playerData);
     setPlayerData(null);
-    StopPlayerListener(playerData);
+    stopPlayerListener(playerData);
   }
 
-  const Console = () => {
+  const console = () => {
     const playerRef = firebase.database().ref('Players')
 
     playerRef.orderByChild("position").once("value", (snapshot) => {
@@ -57,36 +57,31 @@ function CheckIn() {
   }
 
   return (
-    <>
-      <Navigation/>
-      <div className="CheckIn">
-        {sessionActive ?
-          <>
-            {playerData != null ?
-              <div className="welcome">
-                  <h2>Welcome, <span>{playerData.name}{playerData.uuid}</span></h2>
-                  <p>You are currently on court: {playerData.current_court}</p>
-                  <p>Next you will be on court: {playerData.next_court}</p>
-                  <button onClick={Logout}>Check out</button>
-                  <button onClick={Console}>Console.log</button>
-                  <button onClick={CreatePlayerButton}>Create New Player</button>
-              </div> :
-              <LoginForm Login={Login}/>
-            }
-          </> :
-          <div className="m-4 p-5 bg-secondary text-white rounded">
-            <div className="container">
-              <h1 className="display-4">{RESOURCES.CHECKIN.INACTIVE.TITLE}</h1>
-              <p className="lead">{RESOURCES.CHECKIN.INACTIVE.MESSAGE}</p>
-            </div>
+    <div className="CheckIn">
+      {sessionActive ?
+        <>
+          {playerData != null ?
+            <Profile
+              playerData={playerData}
+              logout={logout}
+              console={console}
+              createPlayerButton={createPlayerButton}
+            /> :
+            <LoginForm Login={Login}/>
+          }
+        </> :
+        <div className="m-4 p-5 bg-secondary text-white rounded">
+          <div className="container">
+            <h1 className="display-4">{RESOURCES.CHECKIN.INACTIVE.TITLE}</h1>
+            <p className="lead">{RESOURCES.CHECKIN.INACTIVE.MESSAGE}</p>
           </div>
-        }
-      </div>
-    </>
+        </div>
+      }
+    </div>
   );
 }
 
-function SetSessionsListener(setSessionActive, setSessionUUID) {
+function setSessionsListener(setSessionActive, setSessionUUID) {
   const sessionRef = firebase.database().ref('Sessions')
 
   sessionRef.on('value', (snapshot) => {
@@ -105,14 +100,14 @@ function SetSessionsListener(setSessionActive, setSessionUUID) {
   });
 }
 
-function StartPlayerListener(setPlayerData, playerData) {
+function startPlayerListener(setPlayerData, playerData) {
   const playerRef = firebase.database().ref('Players').child(playerData.uuid)
 
   playerRef.on('value', (snapshot) => {
     const player = snapshot.val();
     if (!player.active) {
       setPlayerData(null);
-      StopPlayerListener(playerData);
+      stopPlayerListener(playerData);
     } else {
       var fullPlayerData = {uuid: playerData.uuid, ...player};
       setPlayerData(fullPlayerData);
@@ -120,12 +115,12 @@ function StartPlayerListener(setPlayerData, playerData) {
   });
 }
 
-function StopPlayerListener(playerData) {
+function stopPlayerListener(playerData) {
   const playerRef = firebase.database().ref('Players').child(playerData.uuid)
   playerRef.off('value');
 }
 
-function InstantiatePlayerData(setPlayerData, userFullDetails, sessionUUID) {
+function instantiatePlayerData(setPlayerData, userFullDetails, sessionUUID) {
   const playerRef = firebase.database().ref('Players')
 
   playerRef.once('value', (snapshot) => {
@@ -136,16 +131,16 @@ function InstantiatePlayerData(setPlayerData, userFullDetails, sessionUUID) {
       if (userFullDetails.uuid === players[uuid].user_uuid) {
         fullPlayerData = {uuid: uuid, ...players[uuid]};
         fullPlayerData.active = true;
-        UpdatePlayerData(fullPlayerData);
+        updatePlayerData(fullPlayerData);
         setPlayerData(fullPlayerData);
-        StartPlayerListener(setPlayerData, fullPlayerData);
+        startPlayerListener(setPlayerData, fullPlayerData);
         break;
       }
     }
 
     // First time logging in
     if (fullPlayerData == null) {
-      CreatePlayer(userFullDetails, sessionUUID, snapshot.numChildren());
+      createPlayer(userFullDetails, sessionUUID, snapshot.numChildren());
 
       // Still need to fetch again from firebase because we want to get the generated player UUID
       playerRef.once('value', (snapshot) => {
@@ -155,7 +150,7 @@ function InstantiatePlayerData(setPlayerData, userFullDetails, sessionUUID) {
           if (userFullDetails.uuid === players[uuid].user_uuid) {
             fullPlayerData = {uuid: uuid, ...players[uuid]};
             setPlayerData(fullPlayerData);
-            StartPlayerListener(setPlayerData, fullPlayerData);
+            startPlayerListener(setPlayerData, fullPlayerData);
             break;
           }
         }
@@ -164,7 +159,7 @@ function InstantiatePlayerData(setPlayerData, userFullDetails, sessionUUID) {
   });
 }
 
-function CreatePlayer(playerFullDetails, sessionUUID, playerCount) {
+function createPlayer(playerFullDetails, sessionUUID, playerCount) {
   const playerRef = firebase.database().ref('Players')
   const {uuid, ...playerDetails} = playerFullDetails;
 
@@ -182,7 +177,7 @@ function CreatePlayer(playerFullDetails, sessionUUID, playerCount) {
   });
 }
 
-function UpdatePlayerData(playerFullData) {
+function updatePlayerData(playerFullData) {
   const playerRef = firebase.database().ref('Players');
   const {uuid, ...playerData} = playerFullData;
   playerRef.child(uuid).set(playerData);
