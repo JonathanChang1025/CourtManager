@@ -12,7 +12,7 @@ function Profile(prop) {
           <Card className="text-center">
             <Card.Header>You are on court</Card.Header>
             <Card.Body>
-              <Card.Text class="display-1">
+              <Card.Text className="display-1">
                 {
                   prop.playerData.current_court === -1 ?
                   "n/a" :
@@ -24,7 +24,7 @@ function Profile(prop) {
           <Card className="text-center">
             <Card.Header>You are in queue for court</Card.Header>
             <Card.Body>
-              <Card.Text class="display-1">
+              <Card.Text className="display-1">
                 {
                   prop.playerData.next_court === -1 ?
                   "n/a" :
@@ -34,7 +34,7 @@ function Profile(prop) {
             </Card.Body>
           </Card>
           <button onClick={prop.logout}>Check out</button>
-          <button onClick={prop.console}>Console.log</button>
+          <button onClick={prop.callConsole}>Console.log</button>
           <button onClick={prop.createPlayerButton}>Create New Player</button>
         </div>
       </div>

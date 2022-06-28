@@ -30,7 +30,7 @@ function LoginForm(props) {
 		} else {
 			setShowMemberLoginAlert(false)
 		}
-		props.Login(true, member);
+		props.login(true, member);
 	}
 
 	const closeMemberLoginAlert = () => {

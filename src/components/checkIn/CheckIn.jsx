@@ -8,45 +8,55 @@ import { v4 as uuidv4 } from "uuid";
 function CheckIn() {
   const [sessionActive, setSessionActive] = useState(false);
   const [sessionUUID, setSessionUUID] = useState("");
-  const [playerData, setPlayerData] = useState(null);
+  const [playerData, setPlayerData] = useState({});
   
   useEffect(() => {
 		setSessionsListener(setSessionActive, setSessionUUID);
+
+    const userDetailStorage = JSON.parse(localStorage.getItem("userDetails"));
+    // Get user detail from browser, if it exists and player hasn't been initiated already, initiate it
+    if (userDetailStorage !== null &&
+        Object.keys(userDetailStorage).length !== 0 &&
+        Object.keys(playerData).length === 0) {
+      login(null, userDetailStorage);
+    }
 	}, []);
 
-  const Login = (playerType, userDetails) => {
+  const login = (playerType, userDetails) => {
     if (userDetails != null) {
       instantiatePlayerData(setPlayerData, userDetails, sessionUUID);
+      localStorage.setItem("userDetails", JSON.stringify(userDetails)); // If valid user, save it to browser
     } else {
       console.log("userDetails is null: Memeber does not exist in member table database");
     }
   }
 
   const createPlayerButton = () => {
-  const playerRef = firebase.database().ref('Players')
+    const playerRef = firebase.database().ref('Players')
 
-  playerRef.once('value', (snapshot) => {
-    createPlayer(
-      {
-        uuid: uuidv4(),
-        name: "Test Name",
-        phone: "1010101010"
-      },
-      sessionUUID,
-      snapshot.numChildren()
-    );
-  });
+    playerRef.once('value', (snapshot) => {
+      createPlayer(
+        {
+          uuid: uuidv4(),
+          name: "Test Name",
+          phone: "1010101010"
+        },
+        sessionUUID,
+        snapshot.numChildren()
+      );
+    });
     
   }
 
   const logout = () => {
     playerData.active = false;
     updatePlayerData(playerData);
-    setPlayerData(null);
     stopPlayerListener(playerData);
+    setPlayerData({});    
+    localStorage.clear();
   }
 
-  const console = () => {
+  const callConsole = () => {
     const playerRef = firebase.database().ref('Players')
 
     playerRef.orderByChild("position").once("value", (snapshot) => {
@@ -60,14 +70,14 @@ function CheckIn() {
     <div className="CheckIn">
       {sessionActive ?
         <>
-          {playerData != null ?
+          {Object.keys(playerData).length !== 0 ?
             <Profile
               playerData={playerData}
               logout={logout}
-              console={console}
+              callConsole={callConsole}
               createPlayerButton={createPlayerButton}
             /> :
-            <LoginForm Login={Login}/>
+            <LoginForm login={login}/>
           }
         </> :
         <div className="m-4 p-5 bg-secondary text-white rounded">
@@ -106,7 +116,7 @@ function startPlayerListener(setPlayerData, playerData) {
   playerRef.on('value', (snapshot) => {
     const player = snapshot.val();
     if (!player.active) {
-      setPlayerData(null);
+      setPlayerData({});
       stopPlayerListener(playerData);
     } else {
       var fullPlayerData = {uuid: playerData.uuid, ...player};
