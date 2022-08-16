@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Modal } from 'react-bootstrap'
 import { RESOURCES } from '../../resource'
 
-function EndSession({ Logout }) {
+function EndSession({ logout }) {
   const [isModelOpen, setIsModelOpen] = useState(false);
 
   const showModal = () => {
@@ -14,7 +14,7 @@ function EndSession({ Logout }) {
   };
 
   const endSession = () => {
-    Logout();
+    logout();
   }
   return(
     <div>

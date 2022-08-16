@@ -11,3 +11,19 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.card-light-yellow-background {
+  background-color: #a6a227 !important;
+}
+
+.card-light-background {
+  background-color: #6B6E70 !important;
+}
+
+.card-mid-background {
+  background-color: #474B4F !important;
+}
+
+.card-dark-background {
+  background-color: #222629 !important;
+}

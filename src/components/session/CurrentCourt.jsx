@@ -3,7 +3,7 @@ import { Card } from 'react-bootstrap';
 function CurrentCourt(props) {
 
   return(
-    <Card className="text-center" bg="success" text="light">
+    <Card className="text-center mt-3 card-mid-background" text="light">
       <Card.Header>Currently Playing</Card.Header>
       <Card.Body className="p-0">
         <div className="col">
@@ -18,7 +18,7 @@ function CurrentCourt(props) {
                     props.playerList.map(function(player){
                       if (player.current_court === court_id) {
                         return (
-                          <li className="list-group-item list-group-item-success">{player.name}</li>
+                          <li className="list-group-item list-group-item-light">{player.name}</li>
                         );
                       } else {
                         return null;

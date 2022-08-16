@@ -7,6 +7,7 @@ import QueueCourt from "./QueueCourt";
 import AvailablePlayers from "./AvailablePlayers";
 import firebase from "../../services/firebase";
 import { Navigation } from "..";
+import Sidebar from "./Sidebar";
 
 // The way this class works is by adding a listener on the players; the local playerList will be updated as the realtime database is changed
 // When modifying player data, just call updatePlayerData() to update it onto the cloud so that all instances will reflect the change
@@ -25,11 +26,11 @@ function Session() {
     setPlayersListener(setPlayerList);
 	}, []);
 
-  const Login = () => {
+  const login = () => {
     setLoggedIn(true);
   }
 
-  const Logout = () => {
+  const logout = () => {
     deleteSession();
     setLoggedIn(false);
   }
@@ -185,9 +186,10 @@ function Session() {
 
   return (
     <>
-      {true ? //loggedIn ?
-        <div className="container-fluid">
-          <div className="row flex-grow p-2">
+      {loggedIn ?
+        <div className="container-fluid card-dark-background" style={{ height: "100vh"}}>
+          <div className="row flex-grow">
+            <Sidebar/>
             <DragDropContext onDragEnd={handleOnDragEnd}>
               <div className="col p-0">
                 <CurrentCourt
@@ -195,14 +197,14 @@ function Session() {
                   numOfCourts={numOfCourts}
                 />
                 <div className="w-100"></div>
-                <button type="button" className="btn btn-warning btn-block my-2" onClick={startNextGame}>⬆ start next game ⬆</button>
+                <button type="button" className="btn btn-warning btn-block my-3" onClick={startNextGame}>⬆ start next game ⬆</button>
                 <QueueCourt
                   playerList={playerList}
                   numOfCourts={numOfCourts}
                   getIndexWithinContext={getIndexWithinContext}
                 />
               </div>
-              <div className="col-3 p-0">
+              <div className="col-2 p-0">
                 <AvailablePlayers
                   playerList={playerList}
                   getIndexWithinContext={getIndexWithinContext}
@@ -210,11 +212,11 @@ function Session() {
               </div>
             </DragDropContext>
           </div>
-          <EndSession Logout={Logout}></EndSession>
-        </div>:
+          {/* <EndSession logout={logout}></EndSession> */}
+        </div> :
         <>
           <Navigation/>
-          <SessionLogin Login={Login} sessionList={sessionList}/>
+          <SessionLogin login={login} sessionList={sessionList}/>
         </>
       }
     </>

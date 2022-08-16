@@ -4,7 +4,7 @@ import { Droppable, Draggable } from 'react-beautiful-dnd';
 function QueueCourt(props) {
 
   return(
-    <Card className="text-center" bg="primary" text="light">
+    <Card className="text-center card-mid-background" text="light" style={{}}>
       <Card.Header>In Queue</Card.Header>
       <Card.Body className="p-0">
         <div className="col">
