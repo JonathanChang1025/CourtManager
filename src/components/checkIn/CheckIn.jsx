@@ -7,11 +7,11 @@ import { v4 as uuidv4 } from "uuid";
 
 function CheckIn() {
   const [sessionActive, setSessionActive] = useState(false);
-  const [sessionUUID, setSessionUUID] = useState("");
+  const [sessionUuid, setSessionUuid] = useState("");
   const [playerData, setPlayerData] = useState({});
   
   useEffect(() => {
-		setSessionsListener(setSessionActive, setSessionUUID);
+		setSessionsListener(setSessionActive, setSessionUuid);
 
     const userDetailStorage = JSON.parse(localStorage.getItem("userDetails"));
     // Get user detail from browser, if it exists and player hasn't been initiated already, initiate it
@@ -22,9 +22,9 @@ function CheckIn() {
     }
 	}, []);
 
-  const login = (playerType, userDetails) => {
+  const login = (isMember, userDetails) => {
     if (userDetails != null) {
-      instantiatePlayerData(setPlayerData, userDetails, sessionUUID);
+      instantiatePlayerData(setPlayerData, userDetails, sessionUuid, isMember);
       localStorage.setItem("userDetails", JSON.stringify(userDetails)); // If valid user, save it to browser
     } else {
       console.log("userDetails is null: Memeber does not exist in member table database");
@@ -41,7 +41,7 @@ function CheckIn() {
           name: "Test Name",
           phone: "1010101010"
         },
-        sessionUUID,
+        sessionUuid,
         snapshot.numChildren()
       );
     });
@@ -77,7 +77,7 @@ function CheckIn() {
               callConsole={callConsole}
               createPlayerButton={createPlayerButton}
             /> :
-            <LoginForm login={login}/>
+            <LoginForm login={login} createPlayer={createPlayer} sessionUuid={sessionUuid}/>
           }
         </> :
         <div className="m-4 p-5 bg-secondary text-white rounded">
@@ -91,7 +91,7 @@ function CheckIn() {
   );
 }
 
-function setSessionsListener(setSessionActive, setSessionUUID) {
+function setSessionsListener(setSessionActive, setSessionUuid) {
   const sessionRef = firebase.database().ref('Sessions')
 
   sessionRef.on('value', (snapshot) => {
@@ -99,7 +99,7 @@ function setSessionsListener(setSessionActive, setSessionUUID) {
     const sessionList = [];
     for (let uuid in sessions) {
       sessionList.push({uuid, ...sessions[uuid]});
-      setSessionUUID(uuid); // In the future we'll have more sessions not just one
+      setSessionUuid(uuid); // In the future we'll have more sessions not just one
     }
 
     if (!sessionList.length) {
@@ -130,13 +130,14 @@ function stopPlayerListener(playerData) {
   playerRef.off('value');
 }
 
-function instantiatePlayerData(setPlayerData, userFullDetails, sessionUUID) {
+function instantiatePlayerData(setPlayerData, userFullDetails, sessionUuid, isMember) {
   const playerRef = firebase.database().ref('Players')
 
   playerRef.once('value', (snapshot) => {
     const players = snapshot.val();
     var fullPlayerData = null;
 
+    // Search if player has already logged in
     for (let uuid in players) {
       if (userFullDetails.uuid === players[uuid].user_uuid) {
         fullPlayerData = {uuid: uuid, ...players[uuid]};
@@ -150,7 +151,7 @@ function instantiatePlayerData(setPlayerData, userFullDetails, sessionUUID) {
 
     // First time logging in
     if (fullPlayerData == null) {
-      createPlayer(userFullDetails, sessionUUID, snapshot.numChildren());
+      createPlayer(userFullDetails, sessionUuid, snapshot.numChildren(), isMember);
 
       // Still need to fetch again from firebase because we want to get the generated player UUID
       playerRef.once('value', (snapshot) => {
@@ -169,21 +170,21 @@ function instantiatePlayerData(setPlayerData, userFullDetails, sessionUUID) {
   });
 }
 
-function createPlayer(playerFullDetails, sessionUUID, playerCount) {
+function createPlayer(playerFullDetails, sessionUuid, playerCount, isApproved) {
   const playerRef = firebase.database().ref('Players')
-  const {uuid, ...playerDetails} = playerFullDetails;
+  const {uuid, name, phone} = playerFullDetails;
 
-  console.log(playerCount);
   playerRef.push({
     user_uuid : uuid,
     created_at : Date(),
     active : true,
-    session_uuid : sessionUUID,
+    session_uuid : sessionUuid,
     total_games : 0,
     current_court : -1,
     next_court : -1,
     position : playerCount,
-    ...playerDetails
+    name: name,
+    approved: isApproved
   });
 }
 

@@ -3,11 +3,14 @@ import { Button, Form } from 'react-bootstrap';
 import firebase from "../../services/firebase";
 import { RESOURCES } from '../../resource';
 import { Navigation } from "..";
+import { v4 as uuidv4 } from "uuid";
 
 function LoginForm(props) {
 	const [phoneInput, setPhoneInput] = useState("");
+	const [nameInput, setNameInput] = useState("");
 	const [memberList, setMemberList] = useState([]);
 	const [showMemberLoginAlert, setShowMemberLoginAlert] = useState(false);
+	const [showDropinLoginAlert, setShowDropinLoginAlert] = useState("");
 
 	useEffect(() => {
 		const memberRef = firebase.database().ref('Members')
@@ -24,7 +27,7 @@ function LoginForm(props) {
 
 	const memberSubmitHandler = e => {
 		e.preventDefault();
-		var member = getMemberData(memberList, phoneInput);
+		var member = getMemberData(phoneInput);
 		if (member == null) {
 			setShowMemberLoginAlert(true);
 		} else {
@@ -33,11 +36,58 @@ function LoginForm(props) {
 		props.login(true, member);
 	}
 
+	const dropinSubmitHandler = e => {
+		e.preventDefault();
+
+		var nameTaken = false;
+		const playerRef = firebase.database().ref('Players')
+
+    playerRef.once('value', (snapshot) => {
+			const players = snapshot.val();
+
+			for (let uuid in players) {
+				if (players[uuid].name.trim() === nameInput.trim()) {
+					nameTaken = true;
+				}
+			}
+
+			memberList.map((member) => {
+				if (member.name.trim() === nameInput.trim()) {
+					nameTaken = true;
+				}
+			})
+
+			if (nameInput.length < 4) {
+				setShowDropinLoginAlert(RESOURCES.CHECKIN.DROPIN.ERROR_TOO_SHORT);
+			} else if (nameInput.length > 20) {
+				setShowDropinLoginAlert(RESOURCES.CHECKIN.DROPIN.ERROR_TOO_LONG);
+			} else if (nameTaken) {
+				setShowDropinLoginAlert(RESOURCES.CHECKIN.DROPIN.ERROR_TAKEN);
+			} else {
+				setShowDropinLoginAlert("");
+				props.createPlayer(
+					{
+						uuid: uuidv4(),
+						name: nameInput
+        	},
+					props.sessionUuid,
+					snapshot.numChildren(),
+					false
+				);
+			}
+
+    });
+	}
+
 	const closeMemberLoginAlert = () => {
 		setShowMemberLoginAlert(false);
 	}
 
-	function getMemberData(memberList, phoneInput) {
+	const closeDropinLoginAlert = () => {
+		setShowDropinLoginAlert("");
+	}
+
+	function getMemberData(phoneInput) {
 		for (let member of memberList) {
 			var memberPhone = member.phone;
 			if (phoneInput === memberPhone) {
@@ -61,6 +111,15 @@ function LoginForm(props) {
 											<span aria-hidden="true">&times;</span>
 										</button>
 										{RESOURCES.CHECKIN.MEMBER.ERROR_NOT_FOUND}
+									</div> :
+									null
+								}
+								{showDropinLoginAlert !== "" ?
+									<div className="alert alert-danger" role="alert">
+										<button type="button" className="close" onClick={closeDropinLoginAlert}>
+											<span aria-hidden="true">&times;</span>
+										</button>
+										{showDropinLoginAlert}
 									</div> :
 									null
 								}
@@ -105,9 +164,13 @@ function LoginForm(props) {
 								</div>
 								<Form>
 									<Form.Group className="mb-3" controlId="formBasicEmail">
-										<Form.Control type="email" placeholder="Enter full name"/>
+										<Form.Control
+											type="email"
+											placeholder="Enter full name"
+											onChange={(e) => {setNameInput(e.currentTarget.value)}}
+											/>
 									</Form.Group>
-									<Button variant="secondary" type="submit" onClick={memberSubmitHandler}>
+									<Button variant="secondary" type="submit" onClick={dropinSubmitHandler}>
 										{RESOURCES.CHECKIN.DROPIN.BUTTON}
 									</Button>
 								</Form>
