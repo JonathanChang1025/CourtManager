@@ -2,24 +2,18 @@ import { useState } from "react";
 import { Modal } from 'react-bootstrap'
 import { RESOURCES } from '../../resource'
 
-function EndSession({ logout }) {
-  const [isModelOpen, setIsModelOpen] = useState(false);
-
-  const showModal = () => {
-    setIsModelOpen(true);
-  };
-
+function EndSession(props) {
   const hideModal = () => {
-    setIsModelOpen(false);
+    props.setShowLogoutModal(false);
   };
 
   const endSession = () => {
-    logout();
+    props.setShowLogoutModal(false);
+    props.logout();
   }
   return(
     <div>
-      <button type="button" className="btn btn-danger btn-block" onClick={showModal}>End Session</button>
-      <Modal show={isModelOpen} onHide={hideModal}>
+      <Modal show={props.showLogoutModal} onHide={hideModal}>
         <Modal.Header>
           <Modal.Title>{RESOURCES.SESSION.END.TITLE}</Modal.Title>
         </Modal.Header>

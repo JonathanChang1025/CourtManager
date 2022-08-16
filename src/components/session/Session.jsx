@@ -19,7 +19,7 @@ function Session() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [sessionList, setSessionList] = useState([]);
   const [playerList, setPlayerList] = useState([]);
-
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     setSessionsListener(setSessionList, setLoggedIn);
@@ -187,33 +187,35 @@ function Session() {
   return (
     <>
       {loggedIn ?
-        <div className="container-fluid card-dark-background" style={{ height: "100vh"}}>
-          <div className="row flex-grow">
-            <Sidebar/>
-            <DragDropContext onDragEnd={handleOnDragEnd}>
-              <div className="col p-0">
-                <CurrentCourt
-                  playerList={playerList}
-                  numOfCourts={numOfCourts}
-                />
-                <div className="w-100"></div>
-                <button type="button" className="btn btn-warning btn-block my-3" onClick={startNextGame}>⬆ start next game ⬆</button>
-                <QueueCourt
-                  playerList={playerList}
-                  numOfCourts={numOfCourts}
-                  getIndexWithinContext={getIndexWithinContext}
-                />
-              </div>
-              <div className="col-2 p-0">
-                <AvailablePlayers
-                  playerList={playerList}
-                  getIndexWithinContext={getIndexWithinContext}
-                />
-              </div>
-            </DragDropContext>
+        <>
+          <EndSession logout={logout} showLogoutModal={showLogoutModal} setShowLogoutModal={setShowLogoutModal}/>
+          <div className="container-fluid card-dark-background" style={{ height: "100vh"}}>
+            <div className="row flex-grow">
+              <Sidebar setShowLogoutModal={setShowLogoutModal}/>
+              <DragDropContext onDragEnd={handleOnDragEnd}>
+                <div className="col p-0">
+                  <CurrentCourt
+                    playerList={playerList}
+                    numOfCourts={numOfCourts}
+                  />
+                  <div className="w-100"></div>
+                  <button type="button" className="btn btn-warning btn-block my-3" onClick={startNextGame}>⬆ start next game ⬆</button>
+                  <QueueCourt
+                    playerList={playerList}
+                    numOfCourts={numOfCourts}
+                    getIndexWithinContext={getIndexWithinContext}
+                  />
+                </div>
+                <div className="col-2 p-0">
+                  <AvailablePlayers
+                    playerList={playerList}
+                    getIndexWithinContext={getIndexWithinContext}
+                  />
+                </div>
+              </DragDropContext>
+            </div>
           </div>
-          {/* <EndSession logout={logout}></EndSession> */}
-        </div> :
+        </> :
         <>
           <Navigation/>
           <SessionLogin login={login} sessionList={sessionList}/>

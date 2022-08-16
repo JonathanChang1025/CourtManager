@@ -5,7 +5,11 @@ import { FiLogOut } from "react-icons/fi";
 import { MdApproval } from "react-icons/md";
 import { AiOutlineUserAdd, AiFillSwitcher } from "react-icons/ai";
 
-function Sidebar() {
+function Sidebar(props) {
+
+  const showLogoutModal = () => {
+		props.setShowLogoutModal(true);
+	}
 
   return (
     <div className="flex-grow" style={{height: "100vh"}}>
@@ -31,7 +35,7 @@ function Sidebar() {
             </MenuItem>
           </Menu>
           <Menu iconShape="circle">
-            <MenuItem icon={<FiLogOut/>} >
+            <MenuItem icon={<FiLogOut/>} onClick={showLogoutModal}>
               Logout
             </MenuItem>
           </Menu>
