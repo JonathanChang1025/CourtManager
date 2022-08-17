@@ -23,7 +23,7 @@ function AvailablePlayers(props) {
                     props.playerList.map((player, index) =>
                     {
                       // Only display available players if they don't have next court set for them
-                      if (player.next_court === -1) {
+                      if (player.next_court === -1 && player.approved === true) {
                         var indexWithinContext = props.getIndexWithinContext(index, -1);
                         return (
                           <Draggable key={player.uuid} draggableId={player.uuid} index={indexWithinContext}>

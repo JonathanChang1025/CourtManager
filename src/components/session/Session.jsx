@@ -191,7 +191,7 @@ function Session() {
           <EndSession logout={logout} showLogoutModal={showLogoutModal} setShowLogoutModal={setShowLogoutModal}/>
           <div className="container-fluid card-dark-background" style={{ height: "100vh"}}>
             <div className="row flex-grow">
-              <Sidebar setShowLogoutModal={setShowLogoutModal}/>
+              <Sidebar setShowLogoutModal={setShowLogoutModal} playerList={playerList}/>
               <DragDropContext onDragEnd={handleOnDragEnd}>
                 <div className="col p-0">
                   <CurrentCourt
