@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { DragDropContext } from 'react-beautiful-dnd';
 import SessionLogin from "./SessionLogin";
-import EndSession from "./EndSession";
+import EndSessionModal from "./EndSessionModal";
 import CurrentCourt from "./CurrentCourt";
 import QueueCourt from "./QueueCourt";
 import AvailablePlayers from "./AvailablePlayers";
 import firebase from "../../services/firebase";
 import { Navigation } from "..";
 import Sidebar from "./Sidebar";
+import AwaitingApprovalModal from "./AwaitingApprovalModal";
 
 // The way this class works is by adding a listener on the players; the local playerList will be updated as the realtime database is changed
 // When modifying player data, just call updatePlayerData() to update it onto the cloud so that all instances will reflect the change
@@ -19,7 +20,8 @@ function Session() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [sessionList, setSessionList] = useState([]);
   const [playerList, setPlayerList] = useState([]);
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showEndSessionModal, setShowEndSessionModal] = useState(false);
+  const [showAwaitingApprovalModal, setShowAwaitingApprovalModal] = useState(false);
 
   useEffect(() => {
     setSessionsListener(setSessionList, setLoggedIn);
@@ -188,10 +190,15 @@ function Session() {
     <>
       {loggedIn ?
         <>
-          <EndSession logout={logout} showLogoutModal={showLogoutModal} setShowLogoutModal={setShowLogoutModal}/>
+          <AwaitingApprovalModal playerList={playerList} showAwaitingApprovalModal={showAwaitingApprovalModal} setShowAwaitingApprovalModal={setShowAwaitingApprovalModal}/>
+          <EndSessionModal logout={logout} showEndSessionModal={showEndSessionModal} setShowEndSessionModal={setShowEndSessionModal}/>
           <div className="container-fluid card-dark-background" style={{ height: "100vh"}}>
             <div className="row flex-grow">
-              <Sidebar setShowLogoutModal={setShowLogoutModal} playerList={playerList}/>
+              <Sidebar
+                playerList={playerList}
+                setShowAwaitingApprovalModal={setShowAwaitingApprovalModal}
+                setShowEndSessionModal={setShowEndSessionModal}
+              />
               <DragDropContext onDragEnd={handleOnDragEnd}>
                 <div className="col p-0">
                   <CurrentCourt

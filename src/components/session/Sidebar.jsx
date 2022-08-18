@@ -10,12 +10,16 @@ import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from "react
 function Sidebar(props) {
   const [collapsed, setCollapsed] = useState(false);
 
+  const showAwaitingApprovalModal = () => {
+    props.setShowAwaitingApprovalModal(true);
+  }
+
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   }
 
-  const showLogoutModal = () => {
-		props.setShowLogoutModal(true);
+  const showEndSessionModal = () => {
+		props.setShowEndSessionModal(true);
 	}
 
   const unapprovedPlayersCount = props.playerList.filter(player => {
@@ -41,6 +45,7 @@ function Sidebar(props) {
             <MenuItem
               icon={<MdApproval/>}
               suffix={<span className="badge badge-warning badge-pill">{unapprovedPlayersCount}</span>}
+              onClick={showAwaitingApprovalModal}
             >
               Awaiting Approval
             </MenuItem>
@@ -67,7 +72,7 @@ function Sidebar(props) {
             </MenuItem>
           </Menu>
           <Menu iconShape="circle">
-            <MenuItem icon={<FiLogOut/>} onClick={showLogoutModal}>
+            <MenuItem icon={<FiLogOut/>} onClick={showEndSessionModal}>
               Logout
             </MenuItem>
           </Menu>
