@@ -3,12 +3,15 @@ import { ProSidebar, SidebarHeader, SidebarContent, SidebarFooter, Menu, MenuIte
 import 'react-pro-sidebar/dist/css/styles.css';
 import { GiShuttlecock } from "react-icons/gi";
 import { FiLogOut } from "react-icons/fi";
-import { MdApproval } from "react-icons/md";
+import { MdApproval, MdOutlineManageAccounts } from "react-icons/md";
+import { ImSortAlphaAsc, ImSortAlphaDesc, ImSortNumericAsc, ImSortNumbericDesc} from "react-icons/im"
 import { AiOutlineUserAdd, AiFillSwitcher } from "react-icons/ai";
 import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from "react-icons/tb";
 
 function Sidebar(props) {
   const [collapsed, setCollapsed] = useState(false);
+  const [alphaAsc, setAlphaAsc] = useState(true);
+  const [numericAsc, setNumericAsc] = useState(true);
 
   const showAwaitingApprovalModal = () => {
     props.setShowAwaitingApprovalModal(true);
@@ -16,6 +19,14 @@ function Sidebar(props) {
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
+  }
+
+  const sortAlpha = () => {
+    setAlphaAsc(!alphaAsc);
+  }
+
+  const sortNumeric = () => {
+    setNumericAsc(!numericAsc);
   }
 
   const showEndSessionModal = () => {
@@ -42,6 +53,9 @@ function Sidebar(props) {
             </MenuItem>
           </Menu>
           <Menu iconShape="circle">
+            <MenuItem icon={<AiOutlineUserAdd/>} >
+              Add Drop-in Guest
+            </MenuItem>
             <MenuItem
               icon={<MdApproval/>}
               suffix={<span className="badge badge-warning badge-pill">{unapprovedPlayersCount}</span>}
@@ -49,11 +63,33 @@ function Sidebar(props) {
             >
               Awaiting Approval
             </MenuItem>
-            <MenuItem icon={<AiOutlineUserAdd/>} >
-              Add Guest
+            <MenuItem icon={<MdOutlineManageAccounts/>} >
+              Manage Players
             </MenuItem>
+          </Menu>
+          <Menu iconShape="circle">
             <MenuItem icon={<AiFillSwitcher/>} >
-              Toggle Mode
+              Toggle Game Mode
+            </MenuItem>
+            <MenuItem
+              icon={
+                alphaAsc ?
+                <ImSortAlphaAsc/> :
+                <ImSortAlphaDesc/>
+              }
+              onClick={sortAlpha}
+            >
+              Sort Alphabetically
+            </MenuItem>
+            <MenuItem
+              icon={
+                numericAsc ?
+                <ImSortNumericAsc/> :
+                <ImSortNumbericDesc/>
+              }
+              onClick={sortNumeric}
+            >
+              Sort By Game Count
             </MenuItem>
           </Menu>
         </SidebarContent>
