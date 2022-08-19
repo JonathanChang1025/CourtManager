@@ -51,9 +51,9 @@ function Session() {
         player.next_court = -1;
       }
 
-      updatePlayerData(player, "current_court");
-      updatePlayerData(player, "next_court");
-      updatePlayerData(player, "total_games");
+      updatePlayerData(player["uuid"], player["current_court"], "current_court");
+      updatePlayerData(player["uuid"], player["next_court"], "next_court");
+      updatePlayerData(player["uuid"], player["total_games"], "total_games");
     });
   }
 
@@ -62,6 +62,12 @@ function Session() {
     const playerRef = firebase.database().ref('Players');
   
     sessionRef.remove();
+    playerRef.remove();
+  }
+
+  function removePlayer(player_uuid) {
+    const playerRef = firebase.database().ref("Players").child(player_uuid);
+  
     playerRef.remove();
   }
   
@@ -94,10 +100,10 @@ function Session() {
     });
   }
   
-  function updatePlayerData(playerFullData, field) {
+  function updatePlayerData(player_uuid, value, key) {
     const playerRef = firebase.database().ref('Players');
   
-    playerRef.child(playerFullData["uuid"]).child(field).set(playerFullData[field]);
+    playerRef.child(player_uuid).child(key).set(value);
   }
 
   // All players are stored in a single array: playerList
@@ -121,7 +127,7 @@ function Session() {
       // Reconfigure all the position value based on index of array
       tempPlayerList.forEach(function(tempPlayer, index) {
         tempPlayer.position = index;
-        updatePlayerData(tempPlayer, "position");
+        updatePlayerData(tempPlayer["uuid"], tempPlayer["position"], "position");
       })
     } else {
       const numberOfPriorPlayersOnThisCourt = result.destination.index;
@@ -140,7 +146,7 @@ function Session() {
         var numberOfPriorPlayersCounter = 0;
         if (numberOfPriorPlayersOnThisCourt === 0) {
           tempPlayerList[globalSourceIndex].next_court = Number(result.destination.droppableId);
-          updatePlayerData(tempPlayerList[globalSourceIndex], "next_court");
+          updatePlayerData(tempPlayerList[globalSourceIndex]["uuid"], tempPlayerList[globalSourceIndex]["next_court"], "next_court");
 
           const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
           tempPlayerList.splice(0, 0, movingPlayer);
@@ -154,7 +160,7 @@ function Session() {
 
                 tempPlayerList.splice(index, 0, movingPlayer);
                 tempPlayerList[index].next_court = Number(result.destination.droppableId);
-                updatePlayerData(tempPlayerList[index], "next_court");
+                updatePlayerData(tempPlayerList[index]["uuid"], tempPlayerList[index]["next_court"], "next_court");
                 break;
               }
             }
@@ -165,7 +171,7 @@ function Session() {
     // Reconfigure all the position value based on index of array
     tempPlayerList.forEach(function(tempPlayer, index){
       tempPlayer.position = index;
-      updatePlayerData(tempPlayer, "position");
+      updatePlayerData(tempPlayer["uuid"], tempPlayer["position"], "position");
     })
   }
 
@@ -190,7 +196,13 @@ function Session() {
     <>
       {loggedIn ?
         <>
-          <AwaitingApprovalModal playerList={playerList} showAwaitingApprovalModal={showAwaitingApprovalModal} setShowAwaitingApprovalModal={setShowAwaitingApprovalModal}/>
+          <AwaitingApprovalModal
+            showAwaitingApprovalModal={showAwaitingApprovalModal}
+            setShowAwaitingApprovalModal={setShowAwaitingApprovalModal}
+            playerList={playerList}
+            updatePlayerData={updatePlayerData}
+            removePlayer={removePlayer}
+          />
           <EndSessionModal logout={logout} showEndSessionModal={showEndSessionModal} setShowEndSessionModal={setShowEndSessionModal}/>
           <div className="container-fluid card-dark-background" style={{ height: "100vh"}}>
             <div className="row flex-grow">

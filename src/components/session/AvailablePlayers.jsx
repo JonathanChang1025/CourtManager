@@ -14,10 +14,7 @@ function AvailablePlayers(props) {
                 <ul className="list-group flex-fill m-2"
                   {...provided.droppableProps}
                   ref={provided.innerRef}
-                  style={{
-                    //background: snapshot.isDraggingOver ? "lightblue" : null,
-                    minHeight: 500
-                  }}
+                  style={{minHeight: 500}}
                 >
                   {
                     props.playerList.map((player, index) =>

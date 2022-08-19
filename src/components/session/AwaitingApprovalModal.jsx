@@ -1,6 +1,7 @@
 import { Modal } from 'react-bootstrap'
 import { RESOURCES } from '../../resource'
 import AwaitingApprovalItem from './AwaitingApprovalItem';
+import firebase from "../../services/firebase";
 
 function AwaitingApprovalModal(props) {
   const hideModal = () => {
@@ -12,14 +13,23 @@ function AwaitingApprovalModal(props) {
       <Modal show={props.showAwaitingApprovalModal} onHide={hideModal}>
         <Modal.Header>
           <Modal.Title>{RESOURCES.SESSION.APPROVAL.TITLE}</Modal.Title>
+          <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={hideModal}>
+            <span aria-hidden="true">&times;</span>
+          </button>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body style={{minHeight: 200}}>
           <ul className="list-group flex-fill m-2">
             {
               props.playerList.map((player) =>
               {
                 if (!player.approved) {
-                   return <AwaitingApprovalItem player={player}/>
+                   return(
+                    <AwaitingApprovalItem
+                      player={player}
+                      updatePlayerData={props.updatePlayerData}
+                      removePlayer={props.removePlayer}
+                    />
+                  )
                  } else {
                    return null;
                  }
@@ -27,9 +37,6 @@ function AwaitingApprovalModal(props) {
             }
           </ul>
         </Modal.Body>
-        <Modal.Footer>
-          <button type="button" className="btn btn-secondary" onClick={hideModal}>Finished</button>
-        </Modal.Footer>
       </Modal>
     </div>
   )
