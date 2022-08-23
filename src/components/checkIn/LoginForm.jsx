@@ -65,13 +65,13 @@ function LoginForm(props) {
 				setShowDropinLoginAlert(RESOURCES.CHECKIN.DROPIN.ERROR_TAKEN);
 			} else {
 				setShowDropinLoginAlert("");
-				props.createPlayer(
+
+				props.instantiatePlayerData(
 					{
 						uuid: uuidv4(),
 						name: nameInput
         	},
 					props.sessionUuid,
-					snapshot.numChildren(),
 					false
 				);
 			}
@@ -85,6 +85,10 @@ function LoginForm(props) {
 
 	const closeDropinLoginAlert = () => {
 		setShowDropinLoginAlert("");
+	}
+
+	const closeDropinRejectAlert = () => {
+		props.setShowDropinRejectAlert(false);
 	}
 
 	function getMemberData(phoneInput) {
@@ -105,7 +109,8 @@ function LoginForm(props) {
 					<div className="form-group col-md-4 col-md-offset-5 align-center ">
 						<div className="card mt-4">
 							<div className="m-3">
-								{showMemberLoginAlert ?
+								{
+									showMemberLoginAlert ?
 									<div className="alert alert-danger" role="alert">
 										<button type="button" className="close" onClick={closeMemberLoginAlert}>
 											<span aria-hidden="true">&times;</span>
@@ -114,12 +119,23 @@ function LoginForm(props) {
 									</div> :
 									null
 								}
-								{showDropinLoginAlert !== "" ?
+								{
+									showDropinLoginAlert !== "" ?
 									<div className="alert alert-danger" role="alert">
 										<button type="button" className="close" onClick={closeDropinLoginAlert}>
 											<span aria-hidden="true">&times;</span>
 										</button>
 										{showDropinLoginAlert}
+									</div> :
+									null
+								}
+								{
+									props.showDropinRejectAlert ?
+									<div className="alert alert-danger" role="alert">
+										<button type="button" className="close" onClick={closeDropinRejectAlert}>
+											<span aria-hidden="true">&times;</span>
+										</button>
+										{RESOURCES.CHECKIN.DROPIN.REJECT}
 									</div> :
 									null
 								}

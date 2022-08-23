@@ -4,7 +4,7 @@ import { Droppable, Draggable } from 'react-beautiful-dnd';
 function AvailablePlayers(props) {
 
   return(
-    <Card className="text-center mx-3 my-3 px-1 card-mid-background flex-grow" text="light" style={{height: "96vh"}} >
+    <Card className="text-center ml-3 px-1 card-mid-background" text="light" style={{height: "calc(100vh-3px"}} >
       <Card.Header>Available Players</Card.Header>
       <Card.Body className="p-0" style={{overflow: "auto"}}>
         <div className="col">

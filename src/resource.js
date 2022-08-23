@@ -42,11 +42,12 @@ export const RESOURCES = {
         DROPIN : {
             TITLE : "Guest",
             SUBTITLE : "Dropping in?",
-            MESSAGE: "Enter your full name and click drop in",
-            ERROR_TOO_SHORT: "Full name too short (min 4 char)",
-            ERROR_TOO_LONG: "Full name too long (max 20 char)",
-            ERROR_TAKEN: "Full name already taken!",
-            BUTTON : "Drop In"
+            MESSAGE : "Enter your full name and click drop in",
+            ERROR_TOO_SHORT : "Full name too short (min 4 char)",
+            ERROR_TOO_LONG : "Full name too long (max 20 char)",
+            ERROR_TAKEN : "Full name already taken!",
+            BUTTON : "Drop In",
+            REJECT : "Admin has denied your access"
         }
     },
     SESSION : {

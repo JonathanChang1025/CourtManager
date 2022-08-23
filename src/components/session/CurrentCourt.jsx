@@ -3,7 +3,7 @@ import { Card } from 'react-bootstrap';
 function CurrentCourt(props) {
 
   return(
-    <Card className="text-center mt-3 card-mid-background" text="light">
+    <Card className="text-center mb-3 card-mid-background" text="light">
       <Card.Header>Currently Playing</Card.Header>
       <Card.Body className="p-0">
         <div className="col">
