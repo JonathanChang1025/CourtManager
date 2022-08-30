@@ -215,17 +215,24 @@ function Session() {
               </div>
               <DragDropContext onDragEnd={handleOnDragEnd}>
                 <div className="col p-0">
-                  <CurrentCourt
-                    playerList={playerList}
-                    numOfCourts={numOfCourts}
-                  />
-                  <div className="w-100"></div>
-                  <button type="button" className="btn btn-warning btn-block my-3" onClick={startNextGame}>⬆ start next game ⬆</button>
-                  <QueueCourt
-                    playerList={playerList}
-                    numOfCourts={numOfCourts}
-                    getIndexWithinContext={getIndexWithinContext}
-                  />
+                  <div className="py-3" style={{height: "100vh"}}>
+                    <div style={{height: "45%"}}>
+                      <CurrentCourt
+                        playerList={playerList}
+                        numOfCourts={numOfCourts}
+                      />
+                    </div>
+                    <div className="d-flex justify-content-center py-3" style={{height: "10%"}}>
+                      <button className="btn btn-warning btn-block" type="button" onClick={startNextGame}>⬆ start next game ⬆</button>
+                    </div>
+                    <div style={{height: "45%"}}>
+                      <QueueCourt
+                        playerList={playerList}
+                        numOfCourts={numOfCourts}
+                        getIndexWithinContext={getIndexWithinContext}
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className="col-3 p-0">
                   <AvailablePlayers

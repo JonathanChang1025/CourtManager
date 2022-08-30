@@ -4,20 +4,20 @@ import { Droppable, Draggable } from 'react-beautiful-dnd';
 function QueueCourt(props) {
 
   return(
-    <Card className="text-center card-mid-background" text="light" style={{}}>
+    <Card className="text-center card-mid-background" style={{height: "100%"}} text="light">
       <Card.Header>In Queue</Card.Header>
-      <Card.Body className="p-0">
+      <Card.Body className="p-0" style={{overflow: "clip"}}>
         <div className="col">
           <div className="row flex-grow">
             {[...Array(props.numOfCourts)].map((x, court_id) =>
               <Droppable droppableId={court_id.toString()}>
                 {(provided, snapshot) => (
-                  <div className="col p-0">
+                  <div className="col p-3">
                     <p>Court {court_id+1}</p>
-                    <ul className="list-group flex-fill m-2"
+                    <ul className="list-group flex-fill"
                       {...provided.droppableProps}
                       ref={provided.innerRef}
-                      style={{minHeight: 200, maxHeight: 200}}  
+                      style={{minHeight: "200px"}}
                     >
                       {
                         props.playerList.map((player, index) => {
