@@ -205,12 +205,14 @@ function Session() {
           />
           <EndSessionModal logout={logout} showEndSessionModal={showEndSessionModal} setShowEndSessionModal={setShowEndSessionModal}/>
           <div className="container-fluid card-dark-background" style={{ height: "100vh"}}>
-            <div className="row flex-grow">
-              <Sidebar
-                playerList={playerList}
-                setShowAwaitingApprovalModal={setShowAwaitingApprovalModal}
-                setShowEndSessionModal={setShowEndSessionModal}
-              />
+            <div className="row">
+              <div className="col-md-auto px-0">
+                <Sidebar
+                  playerList={playerList}
+                  setShowAwaitingApprovalModal={setShowAwaitingApprovalModal}
+                  setShowEndSessionModal={setShowEndSessionModal}
+                />
+              </div>
               <DragDropContext onDragEnd={handleOnDragEnd}>
                 <div className="col p-0">
                   <CurrentCourt
@@ -225,7 +227,7 @@ function Session() {
                     getIndexWithinContext={getIndexWithinContext}
                   />
                 </div>
-                <div className="col-2 p-0">
+                <div className="col-3 p-0">
                   <AvailablePlayers
                     playerList={playerList}
                     getIndexWithinContext={getIndexWithinContext}

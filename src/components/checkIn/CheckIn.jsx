@@ -5,6 +5,7 @@ import { RESOURCES } from "../../resource";
 import firebase from "../../services/firebase";
 import { v4 as uuidv4 } from "uuid";
 import AwaitingApproval from "./AwaitingApproval";
+import { Navigation } from "../";
 
 function CheckIn() {
   const [sessionActive, setSessionActive] = useState(false);
@@ -40,11 +41,12 @@ function CheckIn() {
       createPlayer(
         {
           uuid: uuidv4(),
-          name: "Test Name",
+          name: Math.random(),
           phone: "1010101010"
         },
         sessionUuid,
-        snapshot.numChildren()
+        snapshot.numChildren(),
+        true
       );
     });
     
@@ -202,12 +204,15 @@ function CheckIn() {
             />
           }
         </> :
-        <div className="m-4 p-5 bg-secondary text-white rounded">
-          <div className="container">
-            <h1 className="display-4">{RESOURCES.CHECKIN.INACTIVE.TITLE}</h1>
-            <p className="lead">{RESOURCES.CHECKIN.INACTIVE.MESSAGE}</p>
+        <>
+          <Navigation/>
+          <div className="m-4 p-5 bg-secondary text-white rounded">
+            <div className="container">
+              <h1 className="display-4">{RESOURCES.CHECKIN.INACTIVE.TITLE}</h1>
+              <p className="lead">{RESOURCES.CHECKIN.INACTIVE.MESSAGE}</p>
+            </div>
           </div>
-        </div>
+        </>
       }
     </div>
   );

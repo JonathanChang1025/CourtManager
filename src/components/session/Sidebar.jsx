@@ -41,7 +41,7 @@ function Sidebar(props) {
   }).length;
 
   return (
-    <div className="flex-grow" style={{height: "100vh"}}>
+    <div className="flex-grow mr-3" style={{height: "100vh"}}>
       <ProSidebar
         className="h-100"
         collapsed={collapsed}
