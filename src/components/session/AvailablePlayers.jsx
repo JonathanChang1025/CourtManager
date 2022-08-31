@@ -15,6 +15,7 @@ function AvailablePlayers(props) {
                   <ul className="list-group flex-fill"
                     {...provided.droppableProps}
                     ref={provided.innerRef}
+                    style={{minHeight: "400px"}}
                   >
                     {
                       props.playerList.map((player, index) =>

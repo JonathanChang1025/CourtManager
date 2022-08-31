@@ -10,7 +10,10 @@ function QueueCourt(props) {
         <div className="col">
           <div className="row flex-grow">
             {[...Array(props.numOfCourts)].map((x, court_id) =>
-              <Droppable droppableId={court_id.toString()}>
+              <Droppable
+                droppableId={court_id.toString()}
+                isDropDisabled={props.courtFull[court_id]}
+              >
                 {(provided, snapshot) => (
                   <div className="col p-3">
                     <p>Court {court_id+1}</p>

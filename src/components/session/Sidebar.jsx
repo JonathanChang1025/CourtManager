@@ -9,7 +9,7 @@ import { AiOutlineUserAdd, AiFillSwitcher } from "react-icons/ai";
 import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from "react-icons/tb";
 
 function Sidebar(props) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [alphaAsc, setAlphaAsc] = useState(true);
   const [numericAsc, setNumericAsc] = useState(true);
 

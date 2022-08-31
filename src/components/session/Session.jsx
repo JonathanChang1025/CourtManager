@@ -22,6 +22,7 @@ function Session() {
   const [playerList, setPlayerList] = useState([]);
   const [showEndSessionModal, setShowEndSessionModal] = useState(false);
   const [showAwaitingApprovalModal, setShowAwaitingApprovalModal] = useState(false);
+  const [courtFull, setCourtFull] = useState([]);
 
   useEffect(() => {
     setSessionsListener(setSessionList, setLoggedIn);
@@ -71,6 +72,27 @@ function Session() {
     playerRef.remove();
   }
   
+  function updateCourtStates(playerList) {
+    var numberOfPlayersOnCourt = 0;
+    var courtStates = [];
+
+    for (let courtId = 0; courtId < numOfCourts; courtId++) {
+      playerList.forEach(function(player) {
+        if (player.next_court === courtId) {
+          numberOfPlayersOnCourt++;
+        }
+      })
+
+      if (numberOfPlayersOnCourt === maxPlayerPerCourt) {
+        courtStates = [...courtStates, true];
+      } else {
+        courtStates = [...courtStates, false];
+      }
+      numberOfPlayersOnCourt = 0;
+    }
+    setCourtFull(courtStates);
+  }
+
   function setSessionsListener(setSessionList, setLoggedIn) {
     const sessionRef = firebase.database().ref('Sessions')
   
@@ -92,11 +114,12 @@ function Session() {
     const playerRef = firebase.database().ref('Players')
   
     playerRef.orderByChild("position").on("value", (snapshot) => {
-      const playerList = [];
+      const playerListBuilder = [];
       snapshot.forEach(function(player) {
-        playerList.push({uuid: player.key, ...player.val()});
+        playerListBuilder.push({uuid: player.key, ...player.val()});
       });
-      setPlayerList(playerList);
+      setPlayerList(playerListBuilder);
+      updateCourtStates(playerListBuilder);
     });
   }
   
@@ -132,37 +155,27 @@ function Session() {
     } else {
       const numberOfPriorPlayersOnThisCourt = result.destination.index;
       const destinationCourtId = Number(result.destination.droppableId);
+      const sourceCourtId = Number(result.source.droppableId);
 
-      var numberOfPlayersOnThisCourt = 0;
-      if (destinationCourtId !== -1) {
-        playerList.forEach(function(player) {
-          if (player.next_court === destinationCourtId) {
-            numberOfPlayersOnThisCourt++;
-          }
-        })
-      }
+      var numberOfPriorPlayersCounter = 0;
+      if (numberOfPriorPlayersOnThisCourt === 0) {
+        tempPlayerList[globalSourceIndex].next_court = Number(result.destination.droppableId);
+        updatePlayerData(tempPlayerList[globalSourceIndex]["uuid"], tempPlayerList[globalSourceIndex]["next_court"], "next_court");
 
-      if (numberOfPlayersOnThisCourt < maxPlayerPerCourt) {
-        var numberOfPriorPlayersCounter = 0;
-        if (numberOfPriorPlayersOnThisCourt === 0) {
-          tempPlayerList[globalSourceIndex].next_court = Number(result.destination.droppableId);
-          updatePlayerData(tempPlayerList[globalSourceIndex]["uuid"], tempPlayerList[globalSourceIndex]["next_court"], "next_court");
+        const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
+        tempPlayerList.splice(0, 0, movingPlayer);
+      } else {
+        for (var index = 0; index < tempPlayerList.length; index++) {
+          if (tempPlayerList[index].next_court === destinationCourtId) {
+            numberOfPriorPlayersCounter++;
+            if (numberOfPriorPlayersOnThisCourt === numberOfPriorPlayersCounter) {
+              const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
+              if (globalSourceIndex > index) index+=1;
 
-          const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
-          tempPlayerList.splice(0, 0, movingPlayer);
-        } else {
-          for (var index = 0; index < tempPlayerList.length; index++) {
-            if (tempPlayerList[index].next_court === destinationCourtId) {
-              numberOfPriorPlayersCounter++;
-              if (numberOfPriorPlayersOnThisCourt === numberOfPriorPlayersCounter) {
-                const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
-                if (globalSourceIndex > index) index+=1;
-
-                tempPlayerList.splice(index, 0, movingPlayer);
-                tempPlayerList[index].next_court = Number(result.destination.droppableId);
-                updatePlayerData(tempPlayerList[index]["uuid"], tempPlayerList[index]["next_court"], "next_court");
-                break;
-              }
+              tempPlayerList.splice(index, 0, movingPlayer);
+              tempPlayerList[index].next_court = Number(result.destination.droppableId);
+              updatePlayerData(tempPlayerList[index]["uuid"], tempPlayerList[index]["next_court"], "next_court");
+              break;
             }
           }
         }
@@ -230,6 +243,7 @@ function Session() {
                         playerList={playerList}
                         numOfCourts={numOfCourts}
                         getIndexWithinContext={getIndexWithinContext}
+                        courtFull={courtFull}
                       />
                     </div>
                   </div>
