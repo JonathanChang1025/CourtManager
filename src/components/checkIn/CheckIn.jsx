@@ -12,15 +12,20 @@ function CheckIn() {
   const [sessionUuid, setSessionUuid] = useState("");
   const [playerData, setPlayerData] = useState({});
   const [showDropinRejectAlert, setShowDropinRejectAlert] = useState(false);
+  const [userIpAddress, setUserIpAddress] = useState();
   
   useEffect(() => {
+    fetch("https://geolocation-db.com/json/0f761a30-fe14-11e9-b59f-e53803842572")
+      .then(response => response.json())
+      .then(data => data.IPv4)
+      .then(IPv4 => setUserIpAddress(IPv4))
+
 		setSessionsListener();
 
     const userDetailStorage = JSON.parse(localStorage.getItem("userDetails"));
+    console.log(userDetailStorage);
     // Get user detail from browser, if it exists and player hasn't been initiated already, initiate it
-    if (userDetailStorage !== null &&
-        Object.keys(userDetailStorage).length !== 0 &&
-        Object.keys(playerData).length === 0) {
+    if (userDetailStorage !== null && Object.keys(userDetailStorage).length !== 0) {
       login(true, userDetailStorage);
     }
 	}, []);
@@ -56,7 +61,6 @@ function CheckIn() {
     playerData.active = false;
     updatePlayerData(playerData);
     stopPlayerListener(playerData);
-    //setPlayerData({});    
     localStorage.clear();
   }
 
@@ -125,12 +129,11 @@ function CheckIn() {
           fullPlayerData = {uuid: uuid, ...players[uuid]};
           fullPlayerData.active = true;
           updatePlayerData(fullPlayerData);
-          //setPlayerData(fullPlayerData);
           startPlayerListener(fullPlayerData);
           break;
         }
       }
-  
+
       // First time logging in
       if (fullPlayerData == null) {
         createPlayer(userFullDetails, sessionUuid, snapshot.numChildren(), isMember);
@@ -142,7 +145,6 @@ function CheckIn() {
           for (let uuid in players) {
             if (userFullDetails.uuid === players[uuid].user_uuid) {
               fullPlayerData = {uuid: uuid, ...players[uuid]};
-              //setPlayerData(fullPlayerData);
               startPlayerListener(fullPlayerData);
               break;
             }
@@ -166,7 +168,8 @@ function CheckIn() {
       next_court : -1,
       position : playerCount,
       name: name,
-      approved: isApproved
+      approved: isApproved,
+      ipv4_address: userIpAddress
     });
   }
   
@@ -198,9 +201,9 @@ function CheckIn() {
             <LoginForm
               login={login}
               instantiatePlayerData={instantiatePlayerData}
-              sessionUuid={sessionUuid}
               showDropinRejectAlert={showDropinRejectAlert}
               setShowDropinRejectAlert={setShowDropinRejectAlert}
+              userIpAddress={userIpAddress}
             />
           }
         </> :

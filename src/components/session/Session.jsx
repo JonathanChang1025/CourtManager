@@ -155,7 +155,6 @@ function Session() {
     } else {
       const numberOfPriorPlayersOnThisCourt = result.destination.index;
       const destinationCourtId = Number(result.destination.droppableId);
-      const sourceCourtId = Number(result.source.droppableId);
 
       var numberOfPriorPlayersCounter = 0;
       if (numberOfPriorPlayersOnThisCourt === 0) {

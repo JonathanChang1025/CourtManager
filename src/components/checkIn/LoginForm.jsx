@@ -47,7 +47,19 @@ function LoginForm(props) {
 
 			for (let uuid in players) {
 				if (players[uuid].name.trim() === nameInput.trim()) {
-					nameTaken = true;
+					// Check if its a drop-in relogin by comparing ipv4
+					if (props.userIpAddress === players[uuid].ipv4_address) {
+						props.login(
+							players[uuid].approved,
+							{
+								uuid: players[uuid].user_uuid,
+								name: players[uuid].name.trim()
+							}
+						);
+						return;
+					} else {
+						nameTaken = true;
+					}
 				}
 			}
 
@@ -65,14 +77,12 @@ function LoginForm(props) {
 				setShowDropinLoginAlert(RESOURCES.CHECKIN.DROPIN.ERROR_TAKEN);
 			} else {
 				setShowDropinLoginAlert("");
-
-				props.instantiatePlayerData(
+				props.login(
+					false,
 					{
 						uuid: uuidv4(),
 						name: nameInput
-        	},
-					props.sessionUuid,
-					false
+					}
 				);
 			}
 
@@ -107,7 +117,7 @@ function LoginForm(props) {
 			<div className="container">
 				<div className="row justify-content-center">
 					<div className="form-group col-md-4 col-md-offset-5 align-center ">
-						<div className="card mt-4">
+						<div className="card mt-3">
 							<div className="m-3">
 								{
 									showMemberLoginAlert ?
