@@ -63,6 +63,9 @@ export const RESOURCES = {
         APPROVAL : {
             TITLE: "Drop-in players awaiting for approval"
         },
+        MANAGE : {
+            TITLE: "Manage approved players"
+        },
         END : {
             TITLE : "Are you sure you want to end session?",
             MESSAGE : `Ending will close this session and remove all players from this session. This action cannot be

@@ -1,7 +1,6 @@
 import { Modal } from 'react-bootstrap'
 import { RESOURCES } from '../../resource'
 import AwaitingApprovalItem from './AwaitingApprovalItem';
-import firebase from "../../services/firebase";
 
 function AwaitingApprovalModal(props) {
   const hideModal = () => {

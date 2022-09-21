@@ -9,6 +9,7 @@ import firebase from "../../services/firebase";
 import { Navigation } from "..";
 import Sidebar from "./Sidebar";
 import AwaitingApprovalModal from "./AwaitingApprovalModal";
+import ManagePlayersModal from "./ManagePlayersModal";
 
 // The way this class works is by adding a listener on the players; the local playerList will be updated as the realtime database is changed
 // When modifying player data, just call updatePlayerData() to update it onto the cloud so that all instances will reflect the change
@@ -22,6 +23,7 @@ function Session() {
   const [playerList, setPlayerList] = useState([]);
   const [showEndSessionModal, setShowEndSessionModal] = useState(false);
   const [showAwaitingApprovalModal, setShowAwaitingApprovalModal] = useState(false);
+  const [showManagePlayersModal, setShowManagePlayersModal] = useState(false);
   const [courtFull, setCourtFull] = useState([]);
 
   useEffect(() => {
@@ -52,9 +54,9 @@ function Session() {
         player.next_court = -1;
       }
 
-      updatePlayerData(player["uuid"], player["current_court"], "current_court");
-      updatePlayerData(player["uuid"], player["next_court"], "next_court");
-      updatePlayerData(player["uuid"], player["total_games"], "total_games");
+      updatePlayerData(player["uuid"], "current_court", player["current_court"]);
+      updatePlayerData(player["uuid"], "next_court", player["next_court"]);
+      updatePlayerData(player["uuid"], "total_games", player["total_games"]);
     });
   }
 
@@ -123,7 +125,7 @@ function Session() {
     });
   }
   
-  function updatePlayerData(player_uuid, value, key) {
+  function updatePlayerData(player_uuid, key, value) {
     const playerRef = firebase.database().ref('Players');
   
     playerRef.child(player_uuid).child(key).set(value);
@@ -150,7 +152,7 @@ function Session() {
       // Reconfigure all the position value based on index of array
       tempPlayerList.forEach(function(tempPlayer, index) {
         tempPlayer.position = index;
-        updatePlayerData(tempPlayer["uuid"], tempPlayer["position"], "position");
+        updatePlayerData(tempPlayer["uuid"], "position", tempPlayer["position"]);
       })
     } else {
       const numberOfPriorPlayersOnThisCourt = result.destination.index;
@@ -159,7 +161,7 @@ function Session() {
       var numberOfPriorPlayersCounter = 0;
       if (numberOfPriorPlayersOnThisCourt === 0) {
         tempPlayerList[globalSourceIndex].next_court = Number(result.destination.droppableId);
-        updatePlayerData(tempPlayerList[globalSourceIndex]["uuid"], tempPlayerList[globalSourceIndex]["next_court"], "next_court");
+        updatePlayerData(tempPlayerList[globalSourceIndex]["uuid"], "next_court", tempPlayerList[globalSourceIndex]["next_court"]);
 
         const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
         tempPlayerList.splice(0, 0, movingPlayer);
@@ -173,7 +175,7 @@ function Session() {
 
               tempPlayerList.splice(index, 0, movingPlayer);
               tempPlayerList[index].next_court = Number(result.destination.droppableId);
-              updatePlayerData(tempPlayerList[index]["uuid"], tempPlayerList[index]["next_court"], "next_court");
+              updatePlayerData(tempPlayerList[index]["uuid"], "next_court", tempPlayerList[index]["next_court"]);
               break;
             }
           }
@@ -183,7 +185,7 @@ function Session() {
     // Reconfigure all the position value based on index of array
     tempPlayerList.forEach(function(tempPlayer, index){
       tempPlayer.position = index;
-      updatePlayerData(tempPlayer["uuid"], tempPlayer["position"], "position");
+      updatePlayerData(tempPlayer["uuid"], "position", tempPlayer["position"]);
     })
   }
 
@@ -215,13 +217,25 @@ function Session() {
             updatePlayerData={updatePlayerData}
             removePlayer={removePlayer}
           />
-          <EndSessionModal logout={logout} showEndSessionModal={showEndSessionModal} setShowEndSessionModal={setShowEndSessionModal}/>
+          <ManagePlayersModal
+            showManagePlayersModal={showManagePlayersModal}
+            setShowManagePlayersModal={setShowManagePlayersModal}
+            playerList={playerList}
+            updatePlayerData={updatePlayerData}
+            removePlayer={removePlayer}
+          />
+          <EndSessionModal
+            logout={logout}
+            showEndSessionModal={showEndSessionModal}
+            setShowEndSessionModal={setShowEndSessionModal}
+          />
           <div className="container-fluid card-dark-background" style={{ height: "100vh"}}>
             <div className="row">
               <div className="col-md-auto px-0">
                 <Sidebar
                   playerList={playerList}
                   setShowAwaitingApprovalModal={setShowAwaitingApprovalModal}
+                  setShowManagePlayersModal={setShowManagePlayersModal}
                   setShowEndSessionModal={setShowEndSessionModal}
                 />
               </div>

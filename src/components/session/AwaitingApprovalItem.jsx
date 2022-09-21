@@ -13,9 +13,21 @@ function AwaitingApprovalItem(props) {
     >
       {props.player.name}
       <div>
-        <button type="button" className="btn btn-danger" onClick={() => {props.removePlayer(props.player.uuid)}}>Reject</button>
+        <button
+          className="btn btn-danger"
+          type="button"
+          onClick={() => {props.removePlayer(props.player.uuid)}}
+        >
+          Reject
+        </button>
         &nbsp;
-        <button type="button" className="btn btn-success" onClick={() => {props.updatePlayerData(props.player.uuid, true, "approved")}}>Approve</button>
+        <button
+          className="btn btn-success"
+          type="button"
+          onClick={() => {props.updatePlayerData(props.player.uuid, "approved", true)}}
+        >
+          Approve
+        </button>
       </div>
     </li>
     

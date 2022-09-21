@@ -17,6 +17,10 @@ function Sidebar(props) {
     props.setShowAwaitingApprovalModal(true);
   }
 
+  const showManagePlayersModal = () => {
+    props.setShowManagePlayersModal(true);
+  }
+
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   }
@@ -57,13 +61,21 @@ function Sidebar(props) {
               Add Drop-in Guest
             </MenuItem>
             <MenuItem
-              icon={<MdApproval/>}
+              style={unapprovedPlayersCount > 0 ? {color: "#ffc107"} : null}
+              icon={
+                unapprovedPlayersCount > 0 ?
+                <div class="spinner-grow text-warning" role="status"/> :
+                <MdApproval/>
+              }
               suffix={<span className="badge badge-warning badge-pill">{unapprovedPlayersCount}</span>}
               onClick={showAwaitingApprovalModal}
             >
               Awaiting Approval
             </MenuItem>
-            <MenuItem icon={<MdOutlineManageAccounts/>} >
+            <MenuItem
+              icon={<MdOutlineManageAccounts/>}
+              onClick={showManagePlayersModal}
+            >
               Manage Players
             </MenuItem>
           </Menu>
