@@ -5,7 +5,7 @@ function QueueCourt(props) {
 
   return(
     <Card className="text-center card-mid-background" style={{height: "100%"}} text="light">
-      <Card.Header>In Queue</Card.Header>
+      <Card.Header className="p-1">In Queue</Card.Header>
       <Card.Body className="p-0" style={{overflow: "clip"}}>
         <div className="col">
           <div className="row flex-grow">
@@ -13,10 +13,20 @@ function QueueCourt(props) {
               <Droppable
                 droppableId={court_id.toString()}
                 isDropDisabled={props.courtFull[court_id]}
+                key={court_id}
               >
                 {(provided, snapshot) => (
                   <div className="col p-3">
-                    <p>Court {court_id+1}</p>
+                    {
+                      props.individualCourtControl ?
+                      (
+                        court_id === 0 ?
+                        <p>⤊ next up</p> :
+                        <p>⬅ waiting ({court_id+1})...</p>
+                      )
+                       :
+                      <p>court {court_id+1}</p>
+                    }
                     <ul className="list-group flex-fill"
                       {...provided.droppableProps}
                       ref={provided.innerRef}

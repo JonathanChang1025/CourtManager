@@ -27,6 +27,7 @@ function ManagePlayersModal(props) {
                       player={player}
                       updatePlayerData={props.updatePlayerData}
                       removePlayer={props.removePlayer}
+                      key={player.uuid}
                     />
                   )
                  } else {

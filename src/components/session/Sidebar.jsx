@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 import { ProSidebar, SidebarHeader, SidebarContent, SidebarFooter, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import 'react-pro-sidebar/dist/css/styles.css';
 import { GiShuttlecock } from "react-icons/gi";
@@ -13,12 +14,20 @@ function Sidebar(props) {
   const [alphaAsc, setAlphaAsc] = useState(true);
   const [numericAsc, setNumericAsc] = useState(true);
 
+  const setShowAddPlayersModal = () => {
+    props.setShowAddPlayersModal(true);
+  }
+
   const showAwaitingApprovalModal = () => {
     props.setShowAwaitingApprovalModal(true);
   }
 
   const showManagePlayersModal = () => {
     props.setShowManagePlayersModal(true);
+  }
+
+  const setIndividualCourtControl = () => {
+    props.setIndividualCourtControl(!props.individualCourtControl);
   }
 
   const toggleCollapsed = () => {
@@ -53,24 +62,28 @@ function Sidebar(props) {
         <SidebarContent>
           <Menu iconShape="round">
             <MenuItem icon={<GiShuttlecock/>} >
-              Home
+              <NavLink className="nav-link p-0" to="/">
+                Home
+              </NavLink>
             </MenuItem>
           </Menu>
           <Menu iconShape="circle">
-            <MenuItem icon={<AiOutlineUserAdd/>} >
-              Add Drop-in Guest
-            </MenuItem>
             <MenuItem
               style={unapprovedPlayersCount > 0 ? {color: "#ffc107"} : null}
               icon={
                 unapprovedPlayersCount > 0 ?
-                <div class="spinner-grow text-warning" role="status"/> :
+                <div className="spinner-grow text-warning" role="status"/> :
                 <MdApproval/>
               }
               suffix={<span className="badge badge-warning badge-pill">{unapprovedPlayersCount}</span>}
               onClick={showAwaitingApprovalModal}
             >
               Awaiting Approval
+            </MenuItem>
+            <MenuItem icon={<AiOutlineUserAdd/>}
+              onClick={setShowAddPlayersModal}
+            >
+              Add Players
             </MenuItem>
             <MenuItem
               icon={<MdOutlineManageAccounts/>}
@@ -80,7 +93,10 @@ function Sidebar(props) {
             </MenuItem>
           </Menu>
           <Menu iconShape="circle">
-            <MenuItem icon={<AiFillSwitcher/>} >
+            <MenuItem
+              icon={<AiFillSwitcher/>}
+              onClick={setIndividualCourtControl}
+            >
               Toggle Game Mode
             </MenuItem>
             <MenuItem

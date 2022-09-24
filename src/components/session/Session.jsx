@@ -8,27 +8,36 @@ import AvailablePlayers from "./AvailablePlayers";
 import firebase from "../../services/firebase";
 import { Navigation } from "..";
 import Sidebar from "./Sidebar";
+import AddPlayersModal from "./AddPlayersModal";
 import AwaitingApprovalModal from "./AwaitingApprovalModal";
 import ManagePlayersModal from "./ManagePlayersModal";
+import IndividualClearCourtButton from "./IndividualClearCourtButton";
+import IndividualStartGameButton from "./IndividualStartGameButton";
+import BatchClearCourtButton from "./BatchClearCourtButton";
+import BatchStartGameButton from "./BatchStartGameButton";
 
 // The way this class works is by adding a listener on the players; the local playerList will be updated as the realtime database is changed
 // When modifying player data, just call updatePlayerData() to update it onto the cloud so that all instances will reflect the change
 
-var numOfCourts = 3;
-var maxPlayerPerCourt = 4;
+const numOfCourts = 3;
+const maxPlayerPerCourt = 4;
 
 function Session() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [sessionList, setSessionList] = useState([]);
+  const [memberList, setMemberList] = useState([]);
   const [playerList, setPlayerList] = useState([]);
   const [showEndSessionModal, setShowEndSessionModal] = useState(false);
+  const [showAddPlayersModal, setShowAddPlayersModal] = useState(false);
   const [showAwaitingApprovalModal, setShowAwaitingApprovalModal] = useState(false);
   const [showManagePlayersModal, setShowManagePlayersModal] = useState(false);
   const [courtFull, setCourtFull] = useState([]);
+  const [individualCourtControl, setIndividualCourtControl] = useState(false);
 
   useEffect(() => {
-    setSessionsListener(setSessionList, setLoggedIn);
-    setPlayersListener(setPlayerList);
+    setSessionsListener();
+    setPlayersListener();
+    setMembersListener();
 	}, []);
 
   const login = () => {
@@ -40,24 +49,71 @@ function Session() {
     setLoggedIn(false);
   }
 
-  const startNextGame = () => {
+  function clearCourts(court_id) {
     playerList.forEach(function (player) {
-      // Increase game count for those who just got off
-      if (player.current_court !== -1) {
-        player.total_games += 1;
-      }
-      // Clear everyone off
-      player.current_court = -1;
-      // Set those who are next to play onto court and clear them off of queue
-      if (player.next_court !== -1) {
-        player.current_court = player.next_court;
-        player.next_court = -1;
+      if (court_id === -1) {
+        // Increase game count for those who just got off
+        if (player.current_court !== -1) {
+          player.total_games += 1;
+          // Clear everyone off
+          player.current_court = -1;
+        }
+      } else {
+        if (player.current_court === court_id) {
+          player.total_games += 1;
+          player.current_court = -1;
+        }
       }
 
       updatePlayerData(player["uuid"], "current_court", player["current_court"]);
       updatePlayerData(player["uuid"], "next_court", player["next_court"]);
       updatePlayerData(player["uuid"], "total_games", player["total_games"]);
     });
+  }
+
+  function startGame(court_id) {
+    playerList.forEach(function (player) {
+      if (court_id === -1) {
+        // Increase game count for those who just got off
+        if (player.current_court !== -1) {
+          player.total_games += 1;
+          // Clear everyone off
+          player.current_court = -1;
+        }
+        // Set those who are next to play onto court and clear them off of queue
+        if (player.next_court !== -1) {
+          player.current_court = player.next_court;
+          player.next_court = -1;
+        }
+      } else {
+        if (player.current_court === court_id) {
+          player.total_games += 1;
+          player.current_court = -1;
+        }
+
+        if (player.next_court === 0) {// the 0 will change if they are unable to go; need an algorithm to find
+          player.current_court = court_id;
+          player.next_court = -1;
+        } else if (player.next_court !== -1) {
+          player.next_court -= 1;
+        }
+      }
+
+      updatePlayerData(player["uuid"], "current_court", player["current_court"]);
+      updatePlayerData(player["uuid"], "next_court", player["next_court"]);
+      updatePlayerData(player["uuid"], "total_games", player["total_games"]);
+    });
+  }
+
+  function buttonEdgePadding(court_id) {
+    switch(court_id) {
+      case 0:
+        return "col pl-0 pr-1";
+      case numOfCourts-1:
+        return "col pl-1 pr-0";
+      default:
+        return "col px-1";
+    }
   }
 
   function deleteSession() {
@@ -95,7 +151,7 @@ function Session() {
     setCourtFull(courtStates);
   }
 
-  function setSessionsListener(setSessionList, setLoggedIn) {
+  function setSessionsListener() {
     const sessionRef = firebase.database().ref('Sessions')
   
     sessionRef.on('value', (snapshot) => {
@@ -106,13 +162,13 @@ function Session() {
       }
       setSessionList(sessionList);
   
-      if (!sessionList.length) {
+      if (!sessionList.length) { // We eventualy need to check on which one it is, but we assume there can ony be one rn
         setLoggedIn(false);
       }
     });
   }
   
-  function setPlayersListener(setPlayerList) {
+  function setPlayersListener() {
     const playerRef = firebase.database().ref('Players')
   
     playerRef.orderByChild("position").on("value", (snapshot) => {
@@ -124,10 +180,28 @@ function Session() {
       updateCourtStates(playerListBuilder);
     });
   }
+
+  function setMembersListener() {
+    const memberRef = firebase.database().ref('Members');
+
+		memberRef.on('value', (snapshot) => {
+			const members = snapshot.val();
+			const memberList = [];
+			for (let uuid in members) {
+				memberList.push({uuid, ...members[uuid]});
+			}
+			setMemberList(memberList);
+		});
+  }
   
   function updatePlayerData(player_uuid, key, value) {
+    const KEY_INTEGER = ["total_games", "current_court", "next_court", "position"]
     const playerRef = firebase.database().ref('Players');
-  
+
+    if (KEY_INTEGER.indexOf(key) > -1) {
+      value = Number(value);
+    }
+
     playerRef.child(player_uuid).child(key).set(value);
   }
 
@@ -206,10 +280,18 @@ function Session() {
     }
   }
 
-  return (
+  return(
     <>
-      {loggedIn ?
+      {
+        loggedIn ?
         <>
+          <AddPlayersModal
+            showAddPlayersModal={showAddPlayersModal}
+            setShowAddPlayersModal={setShowAddPlayersModal}
+            memberList={memberList}
+            playerUuidList={playerList.map(player => player.user_uuid)}
+            sessionUuid={sessionList[0]} // We make this assumption for now..
+          />
           <AwaitingApprovalModal
             showAwaitingApprovalModal={showAwaitingApprovalModal}
             setShowAwaitingApprovalModal={setShowAwaitingApprovalModal}
@@ -234,29 +316,56 @@ function Session() {
               <div className="col-md-auto px-0">
                 <Sidebar
                   playerList={playerList}
+                  setShowAddPlayersModal={setShowAddPlayersModal}
                   setShowAwaitingApprovalModal={setShowAwaitingApprovalModal}
                   setShowManagePlayersModal={setShowManagePlayersModal}
                   setShowEndSessionModal={setShowEndSessionModal}
+                  setIndividualCourtControl={setIndividualCourtControl}
+                  individualCourtControl={individualCourtControl}
                 />
               </div>
               <DragDropContext onDragEnd={handleOnDragEnd}>
                 <div className="col p-0">
-                  <div className="py-3" style={{height: "100vh"}}>
-                    <div style={{height: "45%"}}>
+                  <div className="pb-3" style={{height: "100vh"}}>
+                    <div className="d-flex justify-content-center py-3" style={{height: "10%"}}>
+                      {
+                        individualCourtControl ?
+                        <IndividualClearCourtButton
+                          numOfCourts={numOfCourts}
+                          buttonEdgePadding={buttonEdgePadding}
+                          clearCourts={clearCourts}
+                        /> :
+                        <BatchClearCourtButton
+                          clearCourts={clearCourts}
+                        />
+                      }
+                    </div>
+                    <div style={{height: "40%"}}>
                       <CurrentCourt
                         playerList={playerList}
                         numOfCourts={numOfCourts}
                       />
                     </div>
                     <div className="d-flex justify-content-center py-3" style={{height: "10%"}}>
-                      <button className="btn btn-warning btn-block" type="button" onClick={startNextGame}>⬆ start next game ⬆</button>
+                      {
+                        individualCourtControl ?
+                        <IndividualStartGameButton
+                          numOfCourts={numOfCourts}
+                          buttonEdgePadding={buttonEdgePadding}
+                          startGame={startGame}
+                        /> :
+                        <BatchStartGameButton
+                          startGame={startGame}
+                        />
+                      }
                     </div>
-                    <div style={{height: "45%"}}>
+                    <div style={{height: "40%"}}>
                       <QueueCourt
                         playerList={playerList}
                         numOfCourts={numOfCourts}
                         getIndexWithinContext={getIndexWithinContext}
                         courtFull={courtFull}
+                        individualCourtControl={individualCourtControl}
                       />
                     </div>
                   </div>

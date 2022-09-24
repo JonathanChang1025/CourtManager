@@ -27,6 +27,7 @@ function AwaitingApprovalModal(props) {
                       player={player}
                       updatePlayerData={props.updatePlayerData}
                       removePlayer={props.removePlayer}
+                      key={player.uuid}
                     />
                   )
                  } else {

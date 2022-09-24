@@ -6,6 +6,7 @@ import firebase from "../../services/firebase";
 import { v4 as uuidv4 } from "uuid";
 import AwaitingApproval from "./AwaitingApproval";
 import { Navigation } from "../";
+import { createPlayer, updatePlayerData } from "../shared/PlayerAPI"
 
 function CheckIn() {
   const [sessionActive, setSessionActive] = useState(false);
@@ -51,7 +52,8 @@ function CheckIn() {
         },
         sessionUuid,
         snapshot.numChildren(),
-        true
+        true,
+        userIpAddress
       );
     });
     
@@ -136,7 +138,7 @@ function CheckIn() {
 
       // First time logging in
       if (fullPlayerData == null) {
-        createPlayer(userFullDetails, sessionUuid, snapshot.numChildren(), isMember);
+        createPlayer(userFullDetails, sessionUuid, snapshot.numChildren(), isMember, userIpAddress);
   
         // Still need to fetch again from firebase because we want to get the generated player UUID
         playerRef.once('value', (snapshot) => {
@@ -152,31 +154,6 @@ function CheckIn() {
         });
       }
     });
-  }
-  
-  function createPlayer(playerFullDetails, sessionUuid, playerCount, isApproved) {
-    const playerRef = firebase.database().ref('Players')
-    const {uuid, name, phone} = playerFullDetails;
-  
-    playerRef.push({
-      user_uuid : uuid,
-      created_at : Date(),
-      active : true,
-      session_uuid : sessionUuid,
-      total_games : 0,
-      current_court : -1,
-      next_court : -1,
-      position : playerCount,
-      name: name,
-      approved: isApproved,
-      ipv4_address: userIpAddress
-    });
-  }
-  
-  function updatePlayerData(playerFullData) {
-    const playerRef = firebase.database().ref('Players');
-    const {uuid, ...playerData} = playerFullData;
-    playerRef.child(uuid).set(playerData);
   }
 
   return (
@@ -200,7 +177,6 @@ function CheckIn() {
             </>:
             <LoginForm
               login={login}
-              instantiatePlayerData={instantiatePlayerData}
               showDropinRejectAlert={showDropinRejectAlert}
               setShowDropinRejectAlert={setShowDropinRejectAlert}
               userIpAddress={userIpAddress}

@@ -13,7 +13,7 @@ function LoginForm(props) {
 	const [showDropinLoginAlert, setShowDropinLoginAlert] = useState("");
 
 	useEffect(() => {
-		const memberRef = firebase.database().ref('Members')
+		const memberRef = firebase.database().ref('Members');
 
 		memberRef.on('value', (snapshot) => {
 			const members = snapshot.val();
