@@ -4,25 +4,20 @@ import firebase from "../../services/firebase";
 import { RESOURCES } from '../../resource';
 import { Navigation } from "..";
 import { v4 as uuidv4 } from "uuid";
+import UsernameAlert from "../shared/UsernameAlert";
+import { validatePlayerName } from "../shared/PlayerAPI";
 
 function LoginForm(props) {
 	const [phoneInput, setPhoneInput] = useState("");
 	const [nameInput, setNameInput] = useState("");
 	const [memberList, setMemberList] = useState([]);
+	const [playerList, setPlayerList] = useState([]);
 	const [showMemberLoginAlert, setShowMemberLoginAlert] = useState(false);
 	const [showDropinLoginAlert, setShowDropinLoginAlert] = useState("");
 
 	useEffect(() => {
-		const memberRef = firebase.database().ref('Members');
-
-		memberRef.on('value', (snapshot) => {
-			const members = snapshot.val();
-			const memberList = [];
-			for (let uuid in members) {
-				memberList.push({uuid, ...members[uuid]});
-			}
-			setMemberList(memberList);
-		});
+		setPlayersListener();
+		setMembersListener();
 	}, []);
 
 	const memberSubmitHandler = e => {
@@ -38,54 +33,47 @@ function LoginForm(props) {
 
 	const dropinSubmitHandler = e => {
 		e.preventDefault();
+		const playerRef = firebase.database().ref('Players');
 
-		var nameTaken = false;
-		const playerRef = firebase.database().ref('Players')
+		setNameInput(nameInput.trim());
 
     playerRef.once('value', (snapshot) => {
 			const players = snapshot.val();
 
 			for (let uuid in players) {
-				if (players[uuid].name.trim() === nameInput.trim()) {
+				if (players[uuid].name === nameInput) {
 					// Check if its a drop-in relogin by comparing ipv4
 					if (props.userIpAddress === players[uuid].ipv4_address) {
 						props.login(
 							players[uuid].approved,
 							{
 								uuid: players[uuid].user_uuid,
-								name: players[uuid].name.trim()
+								name: players[uuid].name
 							}
 						);
 						return;
-					} else {
-						nameTaken = true;
 					}
 				}
 			}
 
-			memberList.map((member) => {
-				if (member.name.trim() === nameInput.trim()) {
-					nameTaken = true;
-				}
-			})
+			try {
+					validatePlayerName(
+						nameInput,
+						playerList.map((player) => player.name),
+						memberList.map((member) => member.name)
+					); // If invalid it will throw error
 
-			if (nameInput.length < 4) {
-				setShowDropinLoginAlert(RESOURCES.CHECKIN.DROPIN.ERROR_TOO_SHORT);
-			} else if (nameInput.length > 20) {
-				setShowDropinLoginAlert(RESOURCES.CHECKIN.DROPIN.ERROR_TOO_LONG);
-			} else if (nameTaken) {
-				setShowDropinLoginAlert(RESOURCES.CHECKIN.DROPIN.ERROR_TAKEN);
-			} else {
-				setShowDropinLoginAlert("");
-				props.login(
-					false,
-					{
-						uuid: uuidv4(),
-						name: nameInput
-					}
-				);
+					setShowDropinLoginAlert("");
+					props.login(
+						false,
+						{
+							uuid: uuidv4(),
+							name: nameInput
+						}
+					);
+			} catch (e) {
+				setShowDropinLoginAlert(e.message);
 			}
-
     });
 	}
 
@@ -111,6 +99,31 @@ function LoginForm(props) {
 		return null;
 	}
 
+	function setPlayersListener() {
+    const playerRef = firebase.database().ref('Players')
+  
+    playerRef.orderByChild("position").on("value", (snapshot) => {
+      const playerListBuilder = [];
+      snapshot.forEach(function(player) {
+        playerListBuilder.push({uuid: player.key, ...player.val()});
+      });
+      setPlayerList(playerListBuilder);
+    });
+  }
+
+  function setMembersListener() {
+    const memberRef = firebase.database().ref('Members');
+
+		memberRef.on('value', (snapshot) => {
+			const members = snapshot.val();
+			const memberList = [];
+			for (let uuid in members) {
+				memberList.push({uuid, ...members[uuid]});
+			}
+			setMemberList(memberList);
+		});
+  }
+
 	return (
 		<>
 			<Navigation/>
@@ -131,12 +144,10 @@ function LoginForm(props) {
 								}
 								{
 									showDropinLoginAlert !== "" ?
-									<div className="alert alert-danger" role="alert">
-										<button type="button" className="close" onClick={closeDropinLoginAlert}>
-											<span aria-hidden="true">&times;</span>
-										</button>
-										{showDropinLoginAlert}
-									</div> :
+									<UsernameAlert
+										showMessageAlert={showDropinLoginAlert}
+										closeMessageAlert={closeDropinLoginAlert}
+									/> :
 									null
 								}
 								{
@@ -166,7 +177,7 @@ function LoginForm(props) {
 											type="email"
 											placeholder="Enter registered phone"
 											onChange={(e) => {setPhoneInput(e.currentTarget.value)}}
-											/>
+										/>
 									</Form.Group>
 									<Button variant="primary" type="submit" onClick={memberSubmitHandler}>
 										{RESOURCES.CHECKIN.MEMBER.BUTTON}
@@ -192,7 +203,7 @@ function LoginForm(props) {
 									<Form.Group className="mb-3" controlId="formBasicEmail">
 										<Form.Control
 											type="email"
-											placeholder="Enter full name"
+											placeholder="Enter first and last name"
 											onChange={(e) => {setNameInput(e.currentTarget.value)}}
 											/>
 									</Form.Group>
