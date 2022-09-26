@@ -1,5 +1,5 @@
 import { RESOURCES } from '../../resource'
-import { createPlayer, updatePlayerData } from "../shared/PlayerAPI"
+import { createPlayer } from "../shared/PlayerAPI"
 
 function AddPlayersItem(props) {
 

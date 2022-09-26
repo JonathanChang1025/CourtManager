@@ -289,7 +289,7 @@ function Session() {
             showAddPlayersModal={showAddPlayersModal}
             setShowAddPlayersModal={setShowAddPlayersModal}
             memberList={memberList}
-            playerUuidList={playerList.map(player => player.user_uuid)}
+            playerList={playerList}
             sessionUuid={sessionList[0]} // We make this assumption for now..
           />
           <AwaitingApprovalModal

@@ -35,7 +35,6 @@ function Profile(prop) {
           </Card>
           <button onClick={prop.logout}>Check out</button>
           <button onClick={prop.callConsole}>Console.log</button>
-          <button onClick={prop.createPlayerButton}>Create New Player</button>
         </div>
       </div>
     </div>

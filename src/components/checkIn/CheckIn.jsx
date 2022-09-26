@@ -170,7 +170,6 @@ function CheckIn() {
                   playerData={playerData}
                   logout={logout}
                   callConsole={callConsole}
-                  createPlayerButton={createPlayerButton}
                 /> :
                 <AwaitingApproval/>
               }

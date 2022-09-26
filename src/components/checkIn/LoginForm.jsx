@@ -35,8 +35,6 @@ function LoginForm(props) {
 		e.preventDefault();
 		const playerRef = firebase.database().ref('Players');
 
-		setNameInput(nameInput.trim());
-
     playerRef.once('value', (snapshot) => {
 			const players = snapshot.val();
 
@@ -204,7 +202,7 @@ function LoginForm(props) {
 										<Form.Control
 											type="email"
 											placeholder="Enter first and last name"
-											onChange={(e) => {setNameInput(e.currentTarget.value)}}
+											onChange={(e) => {setNameInput(e.currentTarget.value.trim())}}
 											/>
 									</Form.Group>
 									<Button variant="secondary" type="submit" onClick={dropinSubmitHandler}>

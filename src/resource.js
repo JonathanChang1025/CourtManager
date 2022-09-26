@@ -45,7 +45,9 @@ export const RESOURCES = {
             MESSAGE : "Enter your full name and click drop in",
             ERROR_TOO_SHORT : "Full name too short (min 4 char)",
             ERROR_TOO_LONG : "Full name too long (max 20 char)",
-            ERROR_TAKEN : "Full name already taken!",
+            ERROR_NAME_TAKEN : "Full name already taken!",
+            ERROR_WRONG_FORMAT : "Please enter in this format 'John Doe'",
+            ERROR_LETTERS_ONLY : "English letters only",
             BUTTON : "Drop In",
             REJECT : "Admin has denied your access"
         }

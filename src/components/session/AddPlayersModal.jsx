@@ -1,11 +1,49 @@
+import { useState } from 'react';
 import { Modal } from 'react-bootstrap'
 import { RESOURCES } from '../../resource'
 import AddPlayersItem from './AddPlayersItem';
+import { createPlayer } from "../shared/PlayerAPI"
+import UsernameAlert from "../shared/UsernameAlert";
+import { v4 as uuidv4 } from "uuid";
+import { validatePlayerName } from "../shared/PlayerAPI";
 
 function AddPlayersModal(props) {
+  const [nameInput, setNameInput] = useState("");
+	const [showDropinLoginAlert, setShowDropinLoginAlert] = useState("");
+
   const hideModal = () => {
     props.setShowAddPlayersModal(false);
   };
+
+  const closeDropinLoginAlert = () => {
+		setShowDropinLoginAlert("");
+	}
+
+  const addDropInPlayerHandler = () => {
+    setNameInput(nameInput.trim());
+
+    try {
+      validatePlayerName(
+        nameInput,
+        props.playerList.map((player) => player.name),
+        props.memberList.map((member) => member.name)
+      );
+
+      setShowDropinLoginAlert("");
+      createPlayer(
+        {
+          name: nameInput,
+          uuid: uuidv4()
+        },
+        props.sessionUuid,
+        props.playerList.length,
+        true,
+        0
+      );
+  } catch (e) {
+    setShowDropinLoginAlert(e.message);
+  }
+  }
 
   return(
     <div>
@@ -17,6 +55,14 @@ function AddPlayersModal(props) {
           </button>
         </Modal.Header>
         <Modal.Body style={{minHeight: 200}}>
+          {
+            showDropinLoginAlert !== "" ?
+            <UsernameAlert
+              showMessageAlert={showDropinLoginAlert}
+              closeMessageAlert={closeDropinLoginAlert}
+            /> :
+            null
+          }
           <h6>Drop-in</h6>
           <div className="container ph-3">
             <div className="row">
@@ -24,14 +70,14 @@ function AddPlayersModal(props) {
                 <input
                   className="form-control"
                   placeholder="Enter full name"
-                  //onChange={(e) => {props.updatePlayerData(props.player.uuid, "total_games", e.currentTarget.value)}}
+                  onChange={(e) => {setNameInput(e.currentTarget.value.trim())}}
                 />
               </div>
               <div className="col-3 pr-0">
                 <button
                   className="btn btn-success btn-block"
                   type="button"
-                  //onClick={() => {props.removePlayer(props.player.uuid)}}
+                  onClick={addDropInPlayerHandler}
                 >
                   Add
                 </button>
@@ -44,12 +90,12 @@ function AddPlayersModal(props) {
             {
               props.memberList.map((member) =>
               {
-                if (!props.playerUuidList.includes(member.uuid)) {
+                if (!props.playerList.map(player => player.user_uuid).includes(member.uuid)) {
                    return(
                     <AddPlayersItem
                       member={member}
                       sessionUuid={props.sessionUuid}
-                      playerListCount={props.playerUuidList.length}
+                      playerListCount={props.playerList.length}
                       key={member.uuid}
                     />
                   )
