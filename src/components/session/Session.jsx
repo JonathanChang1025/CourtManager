@@ -33,6 +33,11 @@ function Session() {
   const [showManagePlayersModal, setShowManagePlayersModal] = useState(false);
   const [courtFull, setCourtFull] = useState([]);
   const [individualCourtControl, setIndividualCourtControl] = useState(false);
+  const synth = window.speechSynthesis;
+  const voices = synth.getVoices();
+  const textToSpeech = new SpeechSynthesisUtterance();
+  textToSpeech.voice = voices[4];
+  textToSpeech.rate = 0.7;
 
   useEffect(() => {
     setSessionsListener();
@@ -103,6 +108,36 @@ function Session() {
       updatePlayerData(player["uuid"], "next_court", player["next_court"]);
       updatePlayerData(player["uuid"], "total_games", player["total_games"]);
     });
+
+    var textBuilder = "";
+    if (court_id === -1) {
+      for (let i = 0; i < numOfCourts; i++) {
+        textBuilder += buildTextAndSpeak(i);
+      }
+    } else {
+      textBuilder = buildTextAndSpeak(court_id);
+    }
+
+    textToSpeech.text = textBuilder;
+    console.log(textBuilder);
+    synth.speak(textToSpeech);
+  }
+
+  function buildTextAndSpeak(court_id) {
+    var courtText = "Court " + (court_id + 1) + ": ";
+    var textBuilder = "";
+
+    playerList.forEach(function (player) {
+      if (player.current_court === court_id) {
+        textBuilder += player.name + ". ";
+      }
+    });
+
+    if (textBuilder !== "") {
+      return courtText + textBuilder;
+    }
+
+    return "";
   }
 
   function buttonEdgePadding(court_id) {
@@ -290,7 +325,7 @@ function Session() {
             setShowAddPlayersModal={setShowAddPlayersModal}
             memberList={memberList}
             playerList={playerList}
-            sessionUuid={sessionList[0]} // We make this assumption for now..
+            sessionUuid={sessionList[0].uuid} // We make this assumption for now..
           />
           <AwaitingApprovalModal
             showAwaitingApprovalModal={showAwaitingApprovalModal}
