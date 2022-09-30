@@ -36,10 +36,12 @@ function Sidebar(props) {
 
   const sortAlpha = () => {
     setAlphaAsc(!alphaAsc);
+    props.sortAvailablePlayersByName(alphaAsc);
   }
 
   const sortNumeric = () => {
     setNumericAsc(!numericAsc);
+    props.sortAvailablePlayersByPlayCount(numericAsc);
   }
 
   const showEndSessionModal = () => {

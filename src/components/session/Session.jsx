@@ -54,6 +54,50 @@ function Session() {
     setLoggedIn(false);
   }
 
+  const sortAvailablePlayersByName = (ascending) => {
+    const nonQueuedPlayers = playerList.filter((player) => {
+      return player.next_court === -1;
+    });
+
+    nonQueuedPlayers.sort((a, b) => {
+      const nameA = a.name.toUpperCase();
+      const nameB = b.name.toUpperCase();
+      if (nameA < nameB) {
+        return ascending + !ascending * -1;
+      }
+      if (nameA > nameB) {
+        return !ascending + ascending * -1;
+      }
+      return 0;
+    });
+
+    nonQueuedPlayers.forEach((player, position) => {
+      player.position = getIndexWithinGlobal(position, -1);
+    })
+
+    nonQueuedPlayers.forEach((player) => {
+      updatePlayerData(player.uuid, "position", player.position);
+    })
+  }
+
+  const sortAvailablePlayersByPlayCount = (ascending) => {
+    const nonQueuedPlayers = playerList.filter((player) => {
+      return player.next_court === -1;
+    });
+
+    nonQueuedPlayers.sort((a, b) => {
+      return (a.total_games - b.total_games) * (!ascending + ascending * -1);
+    });
+
+    nonQueuedPlayers.forEach((player, position) => {
+      player.position = getIndexWithinGlobal(position, -1);
+    })
+
+    nonQueuedPlayers.forEach((player) => {
+      updatePlayerData(player.uuid, "position", player.position);
+    })
+  }
+
   function clearCourts(court_id) {
     playerList.forEach(function (player) {
       if (court_id === -1) {
@@ -79,24 +123,23 @@ function Session() {
   function startGame(court_id) {
     playerList.forEach(function (player) {
       if (court_id === -1) {
-        // Increase game count for those who just got off
         if (player.current_court !== -1) {
-          player.total_games += 1;
           // Clear everyone off
           player.current_court = -1;
         }
         // Set those who are next to play onto court and clear them off of queue
         if (player.next_court !== -1) {
+          player.total_games += 1; // Increment their game count as they go on
           player.current_court = player.next_court;
           player.next_court = -1;
         }
       } else {
         if (player.current_court === court_id) {
-          player.total_games += 1;
           player.current_court = -1;
         }
 
         if (player.next_court === 0) {// the 0 will change if they are unable to go; need an algorithm to find
+          player.total_games += 1;
           player.current_court = court_id;
           player.next_court = -1;
         } else if (player.next_court !== -1) {
@@ -357,6 +400,8 @@ function Session() {
                   setShowEndSessionModal={setShowEndSessionModal}
                   setIndividualCourtControl={setIndividualCourtControl}
                   individualCourtControl={individualCourtControl}
+                  sortAvailablePlayersByName={sortAvailablePlayersByName}
+                  sortAvailablePlayersByPlayCount={sortAvailablePlayersByPlayCount}
                 />
               </div>
               <DragDropContext onDragEnd={handleOnDragEnd}>
