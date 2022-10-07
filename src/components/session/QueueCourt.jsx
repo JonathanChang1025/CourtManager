@@ -16,7 +16,7 @@ function QueueCourt(props) {
                 key={court_id}
               >
                 {(provided, snapshot) => (
-                  <div className="col p-3">
+                  <div className="col p-0">
                     {
                       props.individualCourtControl ?
                       (

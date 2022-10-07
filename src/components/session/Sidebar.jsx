@@ -8,6 +8,8 @@ import { MdApproval, MdOutlineManageAccounts } from "react-icons/md";
 import { ImSortAlphaAsc, ImSortAlphaDesc, ImSortNumericAsc, ImSortNumbericDesc} from "react-icons/im"
 import { AiOutlineUserAdd, AiFillSwitcher } from "react-icons/ai";
 import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from "react-icons/tb";
+import { HiVolumeUp, HiVolumeOff } from "react-icons/hi";
+import { BiUserVoice } from "react-icons/bi"
 
 function Sidebar(props) {
   const [collapsed, setCollapsed] = useState(false);
@@ -26,10 +28,6 @@ function Sidebar(props) {
     props.setShowManagePlayersModal(true);
   }
 
-  const setIndividualCourtControl = () => {
-    props.setIndividualCourtControl(!props.individualCourtControl);
-  }
-
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   }
@@ -43,6 +41,7 @@ function Sidebar(props) {
     setNumericAsc(!numericAsc);
     props.sortAvailablePlayersByPlayCount(numericAsc);
   }
+
 
   const showEndSessionModal = () => {
 		props.setShowEndSessionModal(true);
@@ -97,7 +96,7 @@ function Sidebar(props) {
           <Menu iconShape="circle">
             <MenuItem
               icon={<AiFillSwitcher/>}
-              onClick={setIndividualCourtControl}
+              onClick={() => {props.setIndividualCourtControl(!props.individualCourtControl)}}
             >
               Toggle Game Mode
             </MenuItem>
@@ -120,6 +119,22 @@ function Sidebar(props) {
               onClick={sortNumeric}
             >
               Sort By Game Count
+            </MenuItem>
+            <MenuItem
+              icon={<BiUserVoice/>}
+              onClick={() => {props.announceCurrentlyPlaying(-1)}}
+            >
+              Announce Players
+            </MenuItem>
+            <MenuItem
+              icon={
+                props.textToSpeech ?
+                <HiVolumeUp/> :
+                <HiVolumeOff/>
+              }
+              onClick={() => {props.setTextToSpeech(!props.textToSpeech)}}
+            >
+              Auto Announce Toggle
             </MenuItem>
           </Menu>
         </SidebarContent>

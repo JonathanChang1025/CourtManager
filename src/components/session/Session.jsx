@@ -33,11 +33,12 @@ function Session() {
   const [showManagePlayersModal, setShowManagePlayersModal] = useState(false);
   const [courtFull, setCourtFull] = useState([]);
   const [individualCourtControl, setIndividualCourtControl] = useState(false);
+  const [textToSpeech, setTextToSpeech] = useState(true);
   const synth = window.speechSynthesis;
   const voices = synth.getVoices();
-  const textToSpeech = new SpeechSynthesisUtterance();
-  textToSpeech.voice = voices[4];
-  textToSpeech.rate = 0.7;
+  const utterance = new SpeechSynthesisUtterance();
+  utterance.voice = voices[2];
+  utterance.rate = 1;
 
   useEffect(() => {
     setSessionsListener();
@@ -54,7 +55,7 @@ function Session() {
     setLoggedIn(false);
   }
 
-  const sortAvailablePlayersByName = (ascending) => {
+  const sortAvailablePlayersByName = (byAscending) => {
     const nonQueuedPlayers = playerList.filter((player) => {
       return player.next_court === -1;
     });
@@ -63,10 +64,10 @@ function Session() {
       const nameA = a.name.toUpperCase();
       const nameB = b.name.toUpperCase();
       if (nameA < nameB) {
-        return ascending + !ascending * -1;
+        return byAscending + !byAscending * -1;
       }
       if (nameA > nameB) {
-        return !ascending + ascending * -1;
+        return !byAscending + byAscending * -1;
       }
       return 0;
     });
@@ -80,13 +81,13 @@ function Session() {
     })
   }
 
-  const sortAvailablePlayersByPlayCount = (ascending) => {
+  const sortAvailablePlayersByPlayCount = (byAscending) => {
     const nonQueuedPlayers = playerList.filter((player) => {
       return player.next_court === -1;
     });
 
     nonQueuedPlayers.sort((a, b) => {
-      return (a.total_games - b.total_games) * (!ascending + ascending * -1);
+      return (a.total_games - b.total_games) * (!byAscending + byAscending * -1);
     });
 
     nonQueuedPlayers.forEach((player, position) => {
@@ -138,7 +139,7 @@ function Session() {
           player.current_court = -1;
         }
 
-        if (player.next_court === 0) {// the 0 will change if they are unable to go; need an algorithm to find
+        if (player.next_court === 0) { // the 0 will change if they are unable to go; need an algorithm to find
           player.total_games += 1;
           player.current_court = court_id;
           player.next_court = -1;
@@ -152,7 +153,20 @@ function Session() {
       updatePlayerData(player["uuid"], "total_games", player["total_games"]);
     });
 
+    if (textToSpeech) {
+      announceCurrentlyPlaying(court_id);
+    }
+  }
+
+  function announceCurrentlyPlaying(court_id) {
+    if (synth.speaking) {
+      synth.cancel();
+      return;
+    }
+
     var textBuilder = "";
+
+    // court id of -1 is announce all
     if (court_id === -1) {
       for (let i = 0; i < numOfCourts; i++) {
         textBuilder += buildTextAndSpeak(i);
@@ -161,9 +175,9 @@ function Session() {
       textBuilder = buildTextAndSpeak(court_id);
     }
 
-    textToSpeech.text = textBuilder;
+    utterance.text = textBuilder;
     console.log(textBuilder);
-    synth.speak(textToSpeech);
+    synth.speak(utterance);
   }
 
   function buildTextAndSpeak(court_id) {
@@ -402,6 +416,9 @@ function Session() {
                   individualCourtControl={individualCourtControl}
                   sortAvailablePlayersByName={sortAvailablePlayersByName}
                   sortAvailablePlayersByPlayCount={sortAvailablePlayersByPlayCount}
+                  textToSpeech={textToSpeech}
+                  setTextToSpeech={setTextToSpeech}
+                  announceCurrentlyPlaying={announceCurrentlyPlaying}
                 />
               </div>
               <DragDropContext onDragEnd={handleOnDragEnd}>
