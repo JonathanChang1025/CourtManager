@@ -29,7 +29,7 @@ function ManagePlayersItem(props) {
             type="button"
             onClick={() => {props.removePlayer(props.player.uuid)}}
           >
-            Kick
+            {RESOURCES[props.language].SESSION.MANAGE.KICK}
           </button>
         </div>
       </div>

@@ -9,7 +9,9 @@ import { ImSortAlphaAsc, ImSortAlphaDesc, ImSortNumericAsc, ImSortNumbericDesc} 
 import { AiOutlineUserAdd, AiFillSwitcher } from "react-icons/ai";
 import { TbLayoutSidebarLeftCollapse, TbLayoutSidebarRightCollapse } from "react-icons/tb";
 import { HiVolumeUp, HiVolumeOff } from "react-icons/hi";
-import { BiUserVoice } from "react-icons/bi"
+import { BsTranslate } from "react-icons/bs";
+import { BiUserVoice } from "react-icons/bi";
+import { RESOURCES } from "../../resource";
 
 function Sidebar(props) {
   const [collapsed, setCollapsed] = useState(false);
@@ -64,7 +66,7 @@ function Sidebar(props) {
           <Menu iconShape="round">
             <MenuItem icon={<GiShuttlecock/>} >
               <NavLink className="nav-link p-0" to="/">
-                Home
+              {RESOURCES[props.language].SESSION.SIDEBAR.HOME}
               </NavLink>
             </MenuItem>
           </Menu>
@@ -79,18 +81,18 @@ function Sidebar(props) {
               suffix={<span className="badge badge-warning badge-pill">{unapprovedPlayersCount}</span>}
               onClick={showAwaitingApprovalModal}
             >
-              Awaiting Approval
+              {RESOURCES[props.language].SESSION.SIDEBAR.AWAITING_APPROVAL}
             </MenuItem>
             <MenuItem icon={<AiOutlineUserAdd/>}
               onClick={setShowAddPlayersModal}
             >
-              Add Players
+              {RESOURCES[props.language].SESSION.SIDEBAR.ADD_PLAYERS}
             </MenuItem>
             <MenuItem
               icon={<MdOutlineManageAccounts/>}
               onClick={showManagePlayersModal}
             >
-              Manage Players
+              {RESOURCES[props.language].SESSION.SIDEBAR.MANAGE_PLAYERS}
             </MenuItem>
           </Menu>
           <Menu iconShape="circle">
@@ -98,7 +100,7 @@ function Sidebar(props) {
               icon={<AiFillSwitcher/>}
               onClick={() => {props.setIndividualCourtControl(!props.individualCourtControl)}}
             >
-              Toggle Game Mode
+              {RESOURCES[props.language].SESSION.SIDEBAR.TOGGLE_GAME_MODE}
             </MenuItem>
             <MenuItem
               icon={
@@ -108,7 +110,7 @@ function Sidebar(props) {
               }
               onClick={sortAlpha}
             >
-              Sort Alphabetically
+              {RESOURCES[props.language].SESSION.SIDEBAR.SORT_ALPHABETICALLY}
             </MenuItem>
             <MenuItem
               icon={
@@ -118,13 +120,13 @@ function Sidebar(props) {
               }
               onClick={sortNumeric}
             >
-              Sort By Game Count
+              {RESOURCES[props.language].SESSION.SIDEBAR.SORT_BY_GAME_COUNT}
             </MenuItem>
             <MenuItem
               icon={<BiUserVoice/>}
               onClick={() => {props.announceCurrentlyPlaying(-1)}}
             >
-              Announce Players
+              {RESOURCES[props.language].SESSION.SIDEBAR.ANNOUNCE_PLAYERS}
             </MenuItem>
             <MenuItem
               icon={
@@ -134,28 +136,38 @@ function Sidebar(props) {
               }
               onClick={() => {props.setTextToSpeech(!props.textToSpeech)}}
             >
-              Auto Announce Toggle
+              {RESOURCES[props.language].SESSION.SIDEBAR.TOGGLE_AUTO_ANNOUNCE}
             </MenuItem>
           </Menu>
         </SidebarContent>
 
         <SidebarFooter>
         <Menu iconShape="circle">
-            <MenuItem
-              icon={
-                collapsed ?
-                <TbLayoutSidebarRightCollapse/> :
-                <TbLayoutSidebarLeftCollapse/>
-              }
-              onClick={toggleCollapsed}
-            >
-              Collapse Sidebar
-            </MenuItem>
-          </Menu>
-          <Menu iconShape="circle">
-            <MenuItem icon={<FiLogOut/>} onClick={showEndSessionModal}>
-              Logout
-            </MenuItem>
+          <MenuItem
+            icon={
+              collapsed ?
+              <TbLayoutSidebarRightCollapse/> :
+              <TbLayoutSidebarLeftCollapse/>
+            }
+            onClick={toggleCollapsed}
+          >
+            {RESOURCES[props.language].SESSION.SIDEBAR.COLLAPSE_SIDEBAR}
+          </MenuItem>
+          <MenuItem
+            icon={<BsTranslate/>}
+            onClick={() => {props.language == "EN" ?
+              props.setLanguage("CH") :
+              props.setLanguage("EN")
+            }}
+          >
+            {RESOURCES[props.language].SESSION.SIDEBAR.LANGUAGE}
+          </MenuItem>
+          <MenuItem
+            icon={<FiLogOut/>}
+            onClick={showEndSessionModal}
+          >
+            {RESOURCES[props.language].SESSION.SIDEBAR.END_SESSION}
+          </MenuItem>
           </Menu>
         </SidebarFooter>
       </ProSidebar>

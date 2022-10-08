@@ -1,11 +1,12 @@
 import { Card } from 'react-bootstrap';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
+import { RESOURCES } from '../../resource'
 
 function QueueCourt(props) {
 
   return(
     <Card className="text-center card-mid-background" style={{height: "100%"}} text="light">
-      <Card.Header className="p-1">In Queue</Card.Header>
+      <Card.Header className="p-1">{RESOURCES[props.language].SESSION.LABELS.IN_QUEUE}</Card.Header>
       <Card.Body className="p-0" style={{overflow: "clip"}}>
         <div className="col">
           <div className="row flex-grow">
@@ -25,9 +26,9 @@ function QueueCourt(props) {
                         <p>⬅ waiting ({court_id+1})...</p>
                       )
                        :
-                      <p>court {court_id+1}</p>
+                      <p>{RESOURCES[props.language].SESSION.LABELS.COURT} {court_id+1}</p>
                     }
-                    <ul className="list-group flex-fill"
+                    <ul className="list-group flex-fill m-2"
                       {...provided.droppableProps}
                       ref={provided.innerRef}
                       style={{minHeight: "200px"}}

@@ -1,3 +1,5 @@
+import { RESOURCES } from '../../resource'
+
 function IndividualStartGameButton(props) {
   return(
     <div className="col">
@@ -13,7 +15,7 @@ function IndividualStartGameButton(props) {
               onClick={() => {props.startGame(court_id)}}
               style={{height: "100%"}}
             >
-              start game
+              {RESOURCES[props.language].SESSION.LABELS.INDIVIDUAL_START_GAME}
             </button>
           </div>
         )}

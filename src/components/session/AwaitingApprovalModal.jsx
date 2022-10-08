@@ -11,7 +11,7 @@ function AwaitingApprovalModal(props) {
     <div>
       <Modal show={props.showAwaitingApprovalModal} onHide={hideModal}>
         <Modal.Header>
-          <Modal.Title>{RESOURCES.SESSION.APPROVAL.TITLE}</Modal.Title>
+          <Modal.Title>{RESOURCES[props.language].SESSION.APPROVAL.TITLE}</Modal.Title>
           <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={hideModal}>
             <span aria-hidden="true">&times;</span>
           </button>
@@ -28,6 +28,7 @@ function AwaitingApprovalModal(props) {
                       updatePlayerData={props.updatePlayerData}
                       removePlayer={props.removePlayer}
                       key={player.uuid}
+                      language={props.language}
                     />
                   )
                  } else {

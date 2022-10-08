@@ -1,12 +1,13 @@
 import { Card } from 'react-bootstrap';
 import { Droppable, Draggable } from 'react-beautiful-dnd';
+import { RESOURCES } from '../../resource'
 
 function AvailablePlayers(props) {
 
   return(
     <div className="p-3" style={{height: "100vh"}}>
       <Card className="text-center mh-100 card-mid-background" style={{height: "100vh"}} text="light">
-        <Card.Header>Available Players</Card.Header>
+        <Card.Header>{RESOURCES[props.language].SESSION.LABELS.AVAILABLE_PLAYERS}</Card.Header>
         <Card.Body className="p-3" style={{overflow: "auto"}}>
           <div className="col">
             <div className="row flex-grow">

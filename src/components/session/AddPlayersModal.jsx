@@ -40,16 +40,17 @@ function AddPlayersModal(props) {
         true,
         0
       );
-  } catch (e) {
-    setShowDropinLoginAlert(e.message);
-  }
+      setNameInput("");
+    } catch (e) {
+      setShowDropinLoginAlert(e.message);
+    }
   }
 
   return(
     <div>
       <Modal show={props.showAddPlayersModal} onHide={hideModal}>
         <Modal.Header>
-          <Modal.Title>Add Players</Modal.Title>
+          <Modal.Title>{RESOURCES[props.language].SESSION.ADD_PLAYERS.TITLE}</Modal.Title>
           <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={hideModal}>
             <span aria-hidden="true">&times;</span>
           </button>
@@ -63,13 +64,14 @@ function AddPlayersModal(props) {
             /> :
             null
           }
-          <h6>Drop-in</h6>
+          <h6>{RESOURCES[props.language].SESSION.ADD_PLAYERS.DROPIN}</h6>
           <div className="container ph-3">
             <div className="row">
               <div className="col-9 p-0">
                 <input
                   className="form-control"
-                  placeholder="Enter full name"
+                  placeholder={RESOURCES[props.language].SESSION.ADD_PLAYERS.DROPIN_PLACEHOLDER}
+                  value={nameInput}
                   onChange={(e) => {setNameInput(e.currentTarget.value.trim())}}
                 />
               </div>
@@ -79,13 +81,13 @@ function AddPlayersModal(props) {
                   type="button"
                   onClick={addDropInPlayerHandler}
                 >
-                  Add
+                  {RESOURCES[props.language].SESSION.ADD_PLAYERS.DROPIN_ADD}
                 </button>
               </div>
             </div>
           </div>
           <hr/>
-          <h6>Members</h6>
+          <h6>{RESOURCES[props.language].SESSION.ADD_PLAYERS.MEMBERS}</h6>
           <ul className="list-group flex-fill m-2">
             {
               props.memberList.map((member) =>

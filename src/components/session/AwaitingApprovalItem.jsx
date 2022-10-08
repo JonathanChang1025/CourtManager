@@ -18,7 +18,7 @@ function AwaitingApprovalItem(props) {
           type="button"
           onClick={() => {props.removePlayer(props.player.uuid)}}
         >
-          Reject
+          {RESOURCES[props.language].SESSION.APPROVAL.REJECT}
         </button>
         &nbsp;
         <button
@@ -26,7 +26,7 @@ function AwaitingApprovalItem(props) {
           type="button"
           onClick={() => {props.updatePlayerData(props.player.uuid, "approved", true)}}
         >
-          Approve
+          {RESOURCES[props.language].SESSION.APPROVAL.APPROVE}
         </button>
       </div>
     </li>

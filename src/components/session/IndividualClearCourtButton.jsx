@@ -1,3 +1,5 @@
+import { RESOURCES } from '../../resource'
+
 function IndividualClearCourtButton(props) {
   return(
     <div className="col">
@@ -13,7 +15,7 @@ function IndividualClearCourtButton(props) {
               onClick={() => {props.clearCourts(court_id)}}
               style={{height: "100%"}}
             >
-              ➡
+              {RESOURCES[props.language].SESSION.LABELS.INDIVIDUAL_CLEAR_COURT}
             </button>
           </div>
         )}

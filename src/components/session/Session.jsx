@@ -15,6 +15,7 @@ import IndividualClearCourtButton from "./IndividualClearCourtButton";
 import IndividualStartGameButton from "./IndividualStartGameButton";
 import BatchClearCourtButton from "./BatchClearCourtButton";
 import BatchStartGameButton from "./BatchStartGameButton";
+import { propTypes } from "react-bootstrap/esm/Image";
 
 // The way this class works is by adding a listener on the players; the local playerList will be updated as the realtime database is changed
 // When modifying player data, just call updatePlayerData() to update it onto the cloud so that all instances will reflect the change
@@ -33,6 +34,7 @@ function Session() {
   const [showManagePlayersModal, setShowManagePlayersModal] = useState(false);
   const [courtFull, setCourtFull] = useState([]);
   const [individualCourtControl, setIndividualCourtControl] = useState(false);
+  const [language, setLanguage] = useState("EN");
   const [textToSpeech, setTextToSpeech] = useState(true);
   const synth = window.speechSynthesis;
   const voices = synth.getVoices();
@@ -383,6 +385,7 @@ function Session() {
             memberList={memberList}
             playerList={playerList}
             sessionUuid={sessionList[0].uuid} // We make this assumption for now..
+            language={language}
           />
           <AwaitingApprovalModal
             showAwaitingApprovalModal={showAwaitingApprovalModal}
@@ -390,6 +393,7 @@ function Session() {
             playerList={playerList}
             updatePlayerData={updatePlayerData}
             removePlayer={removePlayer}
+            language={language}
           />
           <ManagePlayersModal
             showManagePlayersModal={showManagePlayersModal}
@@ -397,11 +401,13 @@ function Session() {
             playerList={playerList}
             updatePlayerData={updatePlayerData}
             removePlayer={removePlayer}
+            language={language}
           />
           <EndSessionModal
             logout={logout}
             showEndSessionModal={showEndSessionModal}
             setShowEndSessionModal={setShowEndSessionModal}
+            language={language}
           />
           <div className="container-fluid card-dark-background" style={{ height: "100vh"}}>
             <div className="row">
@@ -414,6 +420,8 @@ function Session() {
                   setShowEndSessionModal={setShowEndSessionModal}
                   setIndividualCourtControl={setIndividualCourtControl}
                   individualCourtControl={individualCourtControl}
+                  setLanguage={setLanguage}
+                  language={language}
                   sortAvailablePlayersByName={sortAvailablePlayersByName}
                   sortAvailablePlayersByPlayCount={sortAvailablePlayersByPlayCount}
                   textToSpeech={textToSpeech}
@@ -431,9 +439,11 @@ function Session() {
                           numOfCourts={numOfCourts}
                           buttonEdgePadding={buttonEdgePadding}
                           clearCourts={clearCourts}
+                          language={language}
                         /> :
                         <BatchClearCourtButton
                           clearCourts={clearCourts}
+                          language={language}
                         />
                       }
                     </div>
@@ -441,6 +451,7 @@ function Session() {
                       <CurrentCourt
                         playerList={playerList}
                         numOfCourts={numOfCourts}
+                        language={language}
                       />
                     </div>
                     <div className="d-flex justify-content-center py-3" style={{height: "10%"}}>
@@ -450,9 +461,11 @@ function Session() {
                           numOfCourts={numOfCourts}
                           buttonEdgePadding={buttonEdgePadding}
                           startGame={startGame}
+                          language={language}
                         /> :
                         <BatchStartGameButton
                           startGame={startGame}
+                          language={language}
                         />
                       }
                     </div>
@@ -463,6 +476,7 @@ function Session() {
                         getIndexWithinContext={getIndexWithinContext}
                         courtFull={courtFull}
                         individualCourtControl={individualCourtControl}
+                        language={language}
                       />
                     </div>
                   </div>
@@ -471,6 +485,7 @@ function Session() {
                   <AvailablePlayers
                     playerList={playerList}
                     getIndexWithinContext={getIndexWithinContext}
+                    language={language}
                   />
                 </div>
               </DragDropContext>
