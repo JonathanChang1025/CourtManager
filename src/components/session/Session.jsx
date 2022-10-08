@@ -39,13 +39,14 @@ function Session() {
   const synth = window.speechSynthesis;
   const voices = synth.getVoices();
   const utterance = new SpeechSynthesisUtterance();
-  utterance.voice = voices[2];
+  utterance.voice = voices[94];
   utterance.rate = 1;
 
   useEffect(() => {
     setSessionsListener();
     setPlayersListener();
     setMembersListener();
+    console.log(synth.getVoices());
 	}, []);
 
   const login = () => {
@@ -332,7 +333,7 @@ function Session() {
         updatePlayerData(tempPlayerList[globalSourceIndex]["uuid"], "next_court", tempPlayerList[globalSourceIndex]["next_court"]);
 
         const [movingPlayer] = tempPlayerList.splice(globalSourceIndex, 1);
-        tempPlayerList.splice(0, 0, movingPlayer);
+        tempPlayerList.splice(playerList.length-1, 0, movingPlayer);
       } else {
         for (var index = 0; index < tempPlayerList.length; index++) {
           if (tempPlayerList[index].next_court === destinationCourtId) {
