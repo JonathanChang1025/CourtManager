@@ -19,7 +19,7 @@ function AddPlayersItem(props) {
           type="button"
           onClick={() => {createPlayer(props.member, props.sessionUuid, props.playerListCount, true, 0)}}
         >
-          Add
+          {RESOURCES[props.language].SESSION.ADD_PLAYERS.DROPIN_ADD}
         </button>
       </div>
     </li>

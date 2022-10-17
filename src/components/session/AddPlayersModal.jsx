@@ -98,6 +98,7 @@ function AddPlayersModal(props) {
                       member={member}
                       sessionUuid={props.sessionUuid}
                       playerListCount={props.playerList.length}
+                      language={props.language}
                       key={member.uuid}
                     />
                   )
