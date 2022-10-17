@@ -21,12 +21,23 @@ function QueueCourt(props) {
                     {
                       props.individualCourtControl ?
                       (
-                        court_id === 0 ?
-                        <p>⤊ next up</p> :
-                        <p>⬅ waiting ({court_id+1})...</p>
-                      )
-                       :
-                      <p>{RESOURCES[props.language].SESSION.LABELS.COURT} {court_id+1}</p>
+                        <div className="mx-2">
+                          {
+                            props.queueCourtSelected === -1 || props.queueCourtSelected !== court_id ?
+                            <button className="btn btn-warning btn-block" type="button" onClick={() => props.setQueueCourtSelected(court_id)}>
+                              {RESOURCES[props.language].SESSION.LABELS.COURT} {court_id+1}
+                            </button> :
+                            <button className="btn btn-light-yellow-background btn-block" type="button" onClick={() => props.setQueueCourtSelected(-1)}>
+                              {RESOURCES[props.language].SESSION.LABELS.COURT_SELECTED}
+                            </button>
+                          }
+                        </div>
+                      ) :
+                      <div className="mx-2">
+                        <button className="btn btn-dark-background text-light btn-block" type="button" disabled>
+                          {RESOURCES[props.language].SESSION.LABELS.COURT} {court_id+1}
+                        </button>
+                      </div>
                     }
                     <ul className="list-group flex-fill m-2"
                       {...provided.droppableProps}

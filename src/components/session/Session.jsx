@@ -15,7 +15,6 @@ import IndividualClearCourtButton from "./IndividualClearCourtButton";
 import IndividualStartGameButton from "./IndividualStartGameButton";
 import BatchClearCourtButton from "./BatchClearCourtButton";
 import BatchStartGameButton from "./BatchStartGameButton";
-import { propTypes } from "react-bootstrap/esm/Image";
 
 // The way this class works is by adding a listener on the players; the local playerList will be updated as the realtime database is changed
 // When modifying player data, just call updatePlayerData() to update it onto the cloud so that all instances will reflect the change
@@ -34,6 +33,7 @@ function Session() {
   const [showManagePlayersModal, setShowManagePlayersModal] = useState(false);
   const [courtFull, setCourtFull] = useState([]);
   const [individualCourtControl, setIndividualCourtControl] = useState(false);
+  const [queueCourtSelected, setQueueCourtSelected] = useState(-1);
   const [language, setLanguage] = useState("EN");
   const [textToSpeech, setTextToSpeech] = useState(true);
   const synth = window.speechSynthesis;
@@ -46,7 +46,6 @@ function Session() {
     setSessionsListener();
     setPlayersListener();
     setMembersListener();
-    console.log(synth.getVoices());
 	}, []);
 
   const login = () => {
@@ -142,12 +141,10 @@ function Session() {
           player.current_court = -1;
         }
 
-        if (player.next_court === 0) { // the 0 will change if they are unable to go; need an algorithm to find
+        if (player.next_court === queueCourtSelected) { // the 0 will change if they are unable to go; need an algorithm to find
           player.total_games += 1;
           player.current_court = court_id;
           player.next_court = -1;
-        } else if (player.next_court !== -1) {
-          player.next_court -= 1;
         }
       }
 
@@ -159,6 +156,7 @@ function Session() {
     if (textToSpeech) {
       announceCurrentlyPlaying(court_id);
     }
+    setQueueCourtSelected(-1);
   }
 
   function announceCurrentlyPlaying(court_id) {
@@ -460,9 +458,11 @@ function Session() {
                         individualCourtControl ?
                         <IndividualStartGameButton
                           numOfCourts={numOfCourts}
+                          playerList={playerList}
                           buttonEdgePadding={buttonEdgePadding}
                           startGame={startGame}
                           language={language}
+                          queueCourtSelected={queueCourtSelected}
                         /> :
                         <BatchStartGameButton
                           startGame={startGame}
@@ -478,6 +478,8 @@ function Session() {
                         courtFull={courtFull}
                         individualCourtControl={individualCourtControl}
                         language={language}
+                        setQueueCourtSelected={setQueueCourtSelected}
+                        queueCourtSelected={queueCourtSelected}
                       />
                     </div>
                   </div>
